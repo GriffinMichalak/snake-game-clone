@@ -5,10 +5,19 @@ body {
   justify-content: center;
   align-items: center;
   height: 100vh;
+  font-family: 'Roboto', sans-serif;
 }
 
 canvas {
   background: #000;
-  border: 2px solid #333;
 }
 
+#menu {
+  color:white; 
+  background:#4a752c; 
+  height:50px; 
+  width:617px; 
+  display:flex; 
+  align-items:center; 
+  justify-content:left;
+}

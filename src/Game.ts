@@ -25,8 +25,7 @@ export class Game {
     // --- Update will go here later ---
 
     // --- Render the scene ---
-    this.renderer.clear();
-    this.renderer.drawPlaceholder();
+    this.renderer.drawBoard()
 
     requestAnimationFrame(this.loop);
   };
