@@ -23,7 +23,7 @@ export class Game {
     this.lastTime = timestamp;
 
     // --- Update will go here later ---
-
+    
     // --- Render the scene ---
     this.renderer.drawBoard()
 
