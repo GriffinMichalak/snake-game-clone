@@ -10,6 +10,8 @@ const START_X = 3; // zero-indexed
 const START_Y = 7; // zero-indexed
 
 const margin = 23;
+
+const FOOD_COLOR = "#e7471d"
 export class Renderer {
   constructor(
     private ctx: CanvasRenderingContext2D,
@@ -45,7 +47,7 @@ export class Renderer {
         const x = margin + col * cell_width;
         const y = margin + row * cell_height;
         if (row == this.foodPos[0] && col == this.foodPos[1]) {
-          this.ctx.fillStyle = 'red';
+          this.ctx.fillStyle = FOOD_COLOR;
           this.ctx.fillRect(x, y, cell_width, cell_height);
           continue;
         }

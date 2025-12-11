@@ -1,6 +1,6 @@
 body {
   margin: 0;
-  background: #111;
+  background: radial-gradient(circle at 60% 40%, #d2edff 0%, #90c3e7 60%, #357ebd 100%);
   display: flex;
   justify-content: center;
   align-items: center;
