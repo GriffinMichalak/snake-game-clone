@@ -9,7 +9,7 @@ const START_X = 3; // zero-indexed
 const START_Y = 7; // zero-indexed
 
 let BOARD: number[][] = Array.from({ length: BOARD_HEIGHT }, () => Array(BOARD_WIDTH).fill(0));
-let SNAKE: number[][];
+let SNAKE: any[][];
 
 const MOVE_KEYS: string[] = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'w', 'a', 's', 'd']
 
@@ -29,7 +29,7 @@ export class Game {
 
     const foodCoord = this.generateFood([[START_X, START_Y]])
     BOARD[foodCoord[1]][foodCoord[0]] = 1;
-    SNAKE = [[this.SNAKE_HEAD_Y, this.SNAKE_HEAD_X], [this.SNAKE_HEAD_Y, this.SNAKE_HEAD_X - 1], [this.SNAKE_HEAD_Y, this.SNAKE_HEAD_X - 2]];
+    SNAKE = [[this.SNAKE_HEAD_Y, this.SNAKE_HEAD_X, 'right'], [this.SNAKE_HEAD_Y, this.SNAKE_HEAD_X - 1, 'right'], [this.SNAKE_HEAD_Y, this.SNAKE_HEAD_X - 2, 'right']];
   }
   SNAKE_HEAD_X: number = START_X;
   SNAKE_HEAD_Y: number = START_Y;
@@ -54,14 +54,46 @@ export class Game {
     });
   }
 
-  moveRight() {
-    if (this.SNAKE_HEAD_X < BOARD_WIDTH - 1) {
+  moveSnake() {
+    if (SNAKE[0][2] == 'up' && (this.SNAKE_HEAD_Y > 0)) {
       SNAKE.forEach((cell) => {
-        cell[1] += 0.25;
+        if (cell[2] == 'up') {
+          cell[0] -= 0.25;
+        }
+      });
+
+      this.SNAKE_HEAD_Y -= 0.25;
+      return 1;
+    }
+    if (SNAKE[0][2] == 'down' && (this.SNAKE_HEAD_Y < BOARD_HEIGHT - 1)) {
+      SNAKE.forEach((cell) => {
+        if (cell[2] == 'down') {
+          cell[0] += 0.25;
+        }
+      });
+
+      this.SNAKE_HEAD_Y += 0.25;
+      this.renderer.drawBoard(BOARD, this.SNAKE_HEAD_X, this.SNAKE_HEAD_Y, SNAKE);
+      return 1;
+    }
+    if (SNAKE[0][2] == 'left' && (this.SNAKE_HEAD_X > 0)) {
+      SNAKE.forEach((cell) => {
+        if (cell[2] == 'left') {
+          cell[1] -= 0.25;
+        }
+      });
+
+      this.SNAKE_HEAD_X -= 0.25;
+      return 1;
+    }
+    if (SNAKE[0][2] == 'right' && (this.SNAKE_HEAD_X < BOARD_WIDTH - 1)) {
+      SNAKE.forEach((cell) => {
+        if (cell[2] == 'right') {
+          cell[1] += 0.25;
+        }
       });
 
       this.SNAKE_HEAD_X += 0.25;
-      this.renderer.drawBoard(BOARD, this.SNAKE_HEAD_X, this.SNAKE_HEAD_Y, SNAKE);
       return 1;
     }
     else {
@@ -74,9 +106,24 @@ export class Game {
     this.lastTime = timestamp;
     this.timeElapsed += deltaTime;
 
+    const snakeOnGrid: boolean = SNAKE[0][0] % 1 == 0 && SNAKE[0][1] % 1 == 0;
+
+    if ((this.input.isPressed('ArrowUp') || this.input.isPressed('w')) && snakeOnGrid && SNAKE[0][2] != 'down') {
+      SNAKE[0][2] = 'up';
+    }
+    if ((this.input.isPressed('ArrowDown') || this.input.isPressed('s')) && snakeOnGrid && SNAKE[0][2] != 'up') {
+      SNAKE[0][2] = 'down';
+    }
+    if ((this.input.isPressed('ArrowLeft') || this.input.isPressed('a')) && snakeOnGrid && SNAKE[0][2] != 'right') {
+      SNAKE[0][2] = 'left';
+    }
+    if ((this.input.isPressed('ArrowRight') || this.input.isPressed('d')) && snakeOnGrid && SNAKE[0][2] != 'left') {
+      SNAKE[0][2] = 'right';
+    }
+
     // --- Update will go here later ---
     if (this.timeElapsed > 25) {
-      if (this.moveRight() == 1){
+      if (this.moveSnake() == 1){
         this.timeElapsed = 0;
       }
       else {
