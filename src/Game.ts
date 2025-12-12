@@ -127,7 +127,7 @@ export class Game {
     }
 
     // --- Update will go here later ---
-    if (this.timeElapsed > 25) {
+    if (this.timeElapsed > 20) {
       if (this.moveSnake() == 1){
         this.timeElapsed = 0;
       }
