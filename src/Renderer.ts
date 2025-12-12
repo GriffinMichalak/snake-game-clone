@@ -15,7 +15,7 @@ export class Renderer {
   ) {
   }
 
-  drawBoard(board: number[][]) {
+  drawBoard(board: number[][], snake_x: number, snake_y:number) {
     // board outline
     this.ctx.fillStyle = Colors.OUTLINE_GREEN;
     this.ctx.fillRect(0, 0, this.width, this.height);
@@ -39,19 +39,20 @@ export class Renderer {
           // draw grid background
           this.ctx.fillStyle = isLightGreen ? Colors.LIGHT_GREEN : Colors.DARK_GREEN;
           this.ctx.fillRect(x, y, cell_width, cell_height);
-          continue;
         }
         else if (board[row][col] == 1) {
           // draw food
           this.ctx.fillStyle = Colors.FOOD_COLOR;
           this.ctx.fillRect(x, y, cell_width, cell_height);
-          continue;
         }
-        // draw snake
-        this.ctx.fillStyle = Colors.SNAKE_COLOR;
-        this.ctx.fillRect(x, y, cell_width, cell_height);
+        this.drawSnake(margin + snake_x * cell_width, margin + snake_y * cell_height, cell_width, cell_height);
       }
     }
+  }
+
+  drawSnake(x: number, y: number, cell_width: number, cell_height: number) {
+    this.ctx.fillStyle = Colors.SNAKE_COLOR;
+    this.ctx.fillRect(x, y, cell_width, cell_height);
   }
 
   clear() {

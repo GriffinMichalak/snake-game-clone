@@ -26,11 +26,9 @@ export class Game {
 
     const foodCoord = this.generateFood([[START_X, START_Y]])
     BOARD[foodCoord[1]][foodCoord[0]] = 1;
-    BOARD[START_Y][START_X] = 2;
   }
   SNAKE_X = START_X
   SNAKE_Y = START_Y
-
 
   generateFood(exclude: Array<number[]>): [number, number] {
     let x = Math.floor(Math.random() * BOARD_WIDTH);
@@ -49,9 +47,8 @@ export class Game {
 
   moveRight() {
     if (this.SNAKE_X < BOARD_WIDTH) {
-      BOARD[this.SNAKE_Y][this.SNAKE_X] = 0
-      BOARD[this.SNAKE_Y][this.SNAKE_X + 1] = 2
-      this.SNAKE_X++;
+      this.SNAKE_X += 0.3;
+      this.renderer.drawBoard(BOARD, this.SNAKE_X, this.SNAKE_Y);
     }
   }
 
@@ -67,9 +64,8 @@ export class Game {
     }
     
     // --- Render the scene ---
-    this.renderer.drawBoard(BOARD)
+    this.renderer.drawBoard(BOARD, this.SNAKE_X, this.SNAKE_Y)
 
     requestAnimationFrame(this.loop);
   };
 }
-
