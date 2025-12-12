@@ -1,7 +1,4 @@
-const LIGHT_GREEN = "#aad751" // google light green
-const DARK_GREEN = "#a2d149" // google dark green
-const OUTLINE_GREEN = "#578a34"
-const MENU_GREEN = "#4a752c"
+import { Colors } from "./Colors.js";
 
 const BOARD_HEIGHT = 15;
 const BOARD_WIDTH = 17;
@@ -11,7 +8,7 @@ const START_Y = 7; // zero-indexed
 
 const margin = 23;
 
-const FOOD_COLOR = "#e7471d"
+let BOARD: number[][] = Array.from({ length: BOARD_HEIGHT }, () => Array(BOARD_WIDTH).fill(0));
 export class Renderer {
   constructor(
     private ctx: CanvasRenderingContext2D,
@@ -28,7 +25,7 @@ export class Renderer {
 
   drawBoard() {
     // board outline
-    this.ctx.fillStyle = OUTLINE_GREEN;
+    this.ctx.fillStyle = Colors.OUTLINE_GREEN;
     this.ctx.fillRect(0, 0, this.width, this.height);
 
     // tiled board
@@ -47,18 +44,18 @@ export class Renderer {
         const x = margin + col * cell_width;
         const y = margin + row * cell_height;
         if (row == this.foodPos[0] && col == this.foodPos[1]) {
-          this.ctx.fillStyle = FOOD_COLOR;
+          this.ctx.fillStyle = Colors.FOOD_COLOR;
           this.ctx.fillRect(x, y, cell_width, cell_height);
           continue;
         }
-        this.ctx.fillStyle = isLightGreen ? LIGHT_GREEN : DARK_GREEN;
+        this.ctx.fillStyle = isLightGreen ? Colors.LIGHT_GREEN : Colors.DARK_GREEN;
         this.ctx.fillRect(x, y, cell_width, cell_height);
         isLightGreen = !isLightGreen;
       }
     }
   }
 
-  spawnFood() {
+  drawFood() {
     const x = Math.floor(Math.random() * (BOARD_HEIGHT));
     const y = Math.floor(Math.random() * (BOARD_WIDTH));
     const grid_height = this.height - 2 * margin;
@@ -74,7 +71,7 @@ export class Renderer {
   }
 
   clear() {
-    this.ctx.fillStyle = LIGHT_GREEN;
+    this.ctx.fillStyle = Colors.LIGHT_GREEN;
     this.ctx.fillRect(0, 0, this.width, this.height);
   }
 
