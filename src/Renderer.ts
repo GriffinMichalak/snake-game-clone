@@ -7,29 +7,20 @@ const START_X = 3; // zero-indexed
 const START_Y = 7; // zero-indexed
 
 const margin = 23;
-
-let BOARD: number[][] = Array.from({ length: BOARD_HEIGHT }, () => Array(BOARD_WIDTH).fill(0));
 export class Renderer {
   constructor(
     private ctx: CanvasRenderingContext2D,
     private width: number,
     private height: number,
   ) {
-    this.foodPos = [
-      Math.floor(Math.random() * BOARD_HEIGHT), 
-      Math.floor(Math.random() * BOARD_WIDTH)
-    ]
   }
 
-  private foodPos: number[]; 
-
-  drawBoard() {
+  drawBoard(board: number[][]) {
     // board outline
     this.ctx.fillStyle = Colors.OUTLINE_GREEN;
     this.ctx.fillRect(0, 0, this.width, this.height);
 
     // tiled board
-
     const grid_height = this.height - 2 * margin;
     const grid_width = this.width - 2 * margin;
 
@@ -43,31 +34,24 @@ export class Renderer {
       for (let col = 0; col < BOARD_WIDTH; col++) {
         const x = margin + col * cell_width;
         const y = margin + row * cell_height;
-        if (row == this.foodPos[0] && col == this.foodPos[1]) {
+        isLightGreen = !isLightGreen;
+        if (board[row][col] == 0) {
+          // draw grid background
+          this.ctx.fillStyle = isLightGreen ? Colors.LIGHT_GREEN : Colors.DARK_GREEN;
+          this.ctx.fillRect(x, y, cell_width, cell_height);
+          continue;
+        }
+        else if (board[row][col] == 1) {
+          // draw food
           this.ctx.fillStyle = Colors.FOOD_COLOR;
           this.ctx.fillRect(x, y, cell_width, cell_height);
           continue;
         }
-        this.ctx.fillStyle = isLightGreen ? Colors.LIGHT_GREEN : Colors.DARK_GREEN;
+        // draw snake
+        this.ctx.fillStyle = Colors.SNAKE_COLOR;
         this.ctx.fillRect(x, y, cell_width, cell_height);
-        isLightGreen = !isLightGreen;
       }
     }
-  }
-
-  drawFood() {
-    const x = Math.floor(Math.random() * (BOARD_HEIGHT));
-    const y = Math.floor(Math.random() * (BOARD_WIDTH));
-    const grid_height = this.height - 2 * margin;
-    const grid_width = this.width - 2 * margin;
-
-    const cell_height = (grid_height) / BOARD_HEIGHT;
-    const cell_width = (grid_width) / BOARD_WIDTH;
-
-    this.ctx.fillStyle = 'red';
-    const x_pos = margin + x * cell_width;
-    const y_pos = margin + y * cell_height;
-    this.ctx.fillRect(x_pos, y_pos, cell_width, cell_height);
   }
 
   clear() {
