@@ -3,9 +3,6 @@ import { Colors } from "./Colors.js";
 const BOARD_HEIGHT = 15;
 const BOARD_WIDTH = 17;
 
-const START_X = 3; // zero-indexed
-const START_Y = 7; // zero-indexed
-
 const margin = 23;
 export class Renderer {
   constructor(
@@ -15,7 +12,7 @@ export class Renderer {
   ) {
   }
 
-  drawBoard(board: number[][], snake_x: number, snake_y:number) {
+  drawBoard(board: number[][], snake_x: number, snake_y: number, snake: number[][]) {
     // board outline
     this.ctx.fillStyle = Colors.OUTLINE_GREEN;
     this.ctx.fillRect(0, 0, this.width, this.height);
@@ -45,14 +42,17 @@ export class Renderer {
           this.ctx.fillStyle = Colors.FOOD_COLOR;
           this.ctx.fillRect(x, y, cell_width, cell_height);
         }
-        this.drawSnake(margin + snake_x * cell_width, margin + snake_y * cell_height, cell_width, cell_height);
+        this.drawSnake(snake_x, snake_y, cell_width, cell_height, margin, snake);
       }
     }
   }
 
-  drawSnake(x: number, y: number, cell_width: number, cell_height: number) {
+  drawSnake(x: number, y: number, cell_width: number, cell_height: number, margin:number, snake: number[][]) {
     this.ctx.fillStyle = Colors.SNAKE_COLOR;
-    this.ctx.fillRect(x, y, cell_width, cell_height);
+
+    snake.forEach((cell) => {
+      this.ctx.fillRect(margin + cell[1] * cell_height, margin + cell[0] * cell_width, cell_width, cell_height);
+    })
   }
 
   drawGameOver() {

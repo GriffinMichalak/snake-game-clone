@@ -9,6 +9,7 @@ const START_X = 3; // zero-indexed
 const START_Y = 7; // zero-indexed
 
 let BOARD: number[][] = Array.from({ length: BOARD_HEIGHT }, () => Array(BOARD_WIDTH).fill(0));
+let SNAKE: number[][];
 
 const MOVE_KEYS: string[] = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'w', 'a', 's', 'd']
 
@@ -28,10 +29,11 @@ export class Game {
 
     const foodCoord = this.generateFood([[START_X, START_Y]])
     BOARD[foodCoord[1]][foodCoord[0]] = 1;
+    SNAKE = [[this.SNAKE_HEAD_Y, this.SNAKE_HEAD_X], [this.SNAKE_HEAD_Y, this.SNAKE_HEAD_X - 1], [this.SNAKE_HEAD_Y, this.SNAKE_HEAD_X - 2]];
   }
-  SNAKE_X = START_X
-  SNAKE_Y = START_Y
-
+  SNAKE_HEAD_X: number = START_X;
+  SNAKE_HEAD_Y: number = START_Y;
+  
   generateFood(exclude: Array<number[]>): [number, number] {
     let x = Math.floor(Math.random() * BOARD_WIDTH);
     let y = Math.floor(Math.random() * BOARD_HEIGHT);
@@ -44,7 +46,7 @@ export class Game {
   }
 
   start() {
-    this.renderer.drawBoard(BOARD, this.SNAKE_X, this.SNAKE_Y);
+    this.renderer.drawBoard(BOARD, this.SNAKE_HEAD_X, this.SNAKE_HEAD_Y, SNAKE);
     document.addEventListener('keydown', (event) => {
       if (MOVE_KEYS.includes(event.key)) {
         requestAnimationFrame(this.loop);
@@ -53,9 +55,13 @@ export class Game {
   }
 
   moveRight() {
-    if (this.SNAKE_X < BOARD_WIDTH - 1) {
-      this.SNAKE_X += 0.25;
-      this.renderer.drawBoard(BOARD, this.SNAKE_X, this.SNAKE_Y);
+    if (this.SNAKE_HEAD_X < BOARD_WIDTH - 1) {
+      SNAKE.forEach((cell) => {
+        cell[1] += 0.25;
+      });
+
+      this.SNAKE_HEAD_X += 0.25;
+      this.renderer.drawBoard(BOARD, this.SNAKE_HEAD_X, this.SNAKE_HEAD_Y, SNAKE);
       return 1;
     }
     else {
@@ -69,7 +75,7 @@ export class Game {
     this.timeElapsed += deltaTime;
 
     // --- Update will go here later ---
-    if (this.timeElapsed > 50) {
+    if (this.timeElapsed > 25) {
       if (this.moveRight() == 1){
         this.timeElapsed = 0;
       }
@@ -80,7 +86,7 @@ export class Game {
     }
     
     // --- Render the scene ---
-    this.renderer.drawBoard(BOARD, this.SNAKE_X, this.SNAKE_Y);
+    this.renderer.drawBoard(BOARD, this.SNAKE_HEAD_X, this.SNAKE_HEAD_Y, SNAKE);
 
     requestAnimationFrame(this.loop);
   };
