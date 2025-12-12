@@ -24,7 +24,7 @@ export class Renderer {
     const cell_height = (grid_height) / BOARD_HEIGHT;
     const cell_width = (grid_width) / BOARD_WIDTH;
 
-    let isLightGreen = true;
+    let isLightGreen = false;
 
     // draw grid
     for (let row = 0; row < BOARD_HEIGHT; row++) {
