@@ -55,15 +55,19 @@ export class Renderer {
     this.ctx.fillRect(x, y, cell_width, cell_height);
   }
 
+  drawGameOver() {
+    this.ctx.fillStyle = 'white';
+    this.ctx.fillRect(100, 100, 100, 100);
+  }
+
   clear() {
     this.ctx.fillStyle = Colors.LIGHT_GREEN;
     this.ctx.fillRect(0, 0, this.width, this.height);
   }
 
   drawPlaceholder() {
-    this.ctx.fillStyle = "black";
-    this.ctx.font = "20px Arial";
-    this.ctx.fillText("Snake Game Placeholder", 20, 30);
+    this.ctx.fillStyle = 'white';
+    this.ctx.fillRect(100, 100, 100, 100);
   }
 }
 

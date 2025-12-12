@@ -53,9 +53,13 @@ export class Game {
   }
 
   moveRight() {
-    if (this.SNAKE_X < BOARD_WIDTH) {
+    if (this.SNAKE_X < BOARD_WIDTH - 1) {
       this.SNAKE_X += 0.25;
       this.renderer.drawBoard(BOARD, this.SNAKE_X, this.SNAKE_Y);
+      return 1;
+    }
+    else {
+      return -1;
     }
   }
 
@@ -66,8 +70,13 @@ export class Game {
 
     // --- Update will go here later ---
     if (this.timeElapsed > 50) {
-      this.moveRight();
-      this.timeElapsed = 0;
+      if (this.moveRight() == 1){
+        this.timeElapsed = 0;
+      }
+      else {
+        this.renderer.drawGameOver();
+        return;
+      }
     }
     
     // --- Render the scene ---

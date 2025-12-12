@@ -1,3 +1,7 @@
+html {
+  overflow: hidden;
+}
+
 body {
   margin: 0;
   background: radial-gradient(circle at 60% 40%, #d2edff 0%, #90c3e7 60%, #357ebd 100%);
@@ -6,6 +10,7 @@ body {
   align-items: center;
   height: 100vh;
   font-family: 'Roboto', sans-serif;
+  overflow: hidden;
 }
 
 canvas {
