@@ -10,6 +10,8 @@ const START_Y = 7; // zero-indexed
 
 let BOARD: number[][] = Array.from({ length: BOARD_HEIGHT }, () => Array(BOARD_WIDTH).fill(0));
 
+const MOVE_KEYS: string[] = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'w', 'a', 's', 'd']
+
 export class Game {
   private lastTime = 0;
   private renderer: Renderer;
@@ -42,12 +44,17 @@ export class Game {
   }
 
   start() {
-    requestAnimationFrame(this.loop);
+    this.renderer.drawBoard(BOARD, this.SNAKE_X, this.SNAKE_Y);
+    document.addEventListener('keydown', (event) => {
+      if (MOVE_KEYS.includes(event.key)) {
+        requestAnimationFrame(this.loop);
+      }
+    });
   }
 
   moveRight() {
     if (this.SNAKE_X < BOARD_WIDTH) {
-      this.SNAKE_X += 0.3;
+      this.SNAKE_X += 0.25;
       this.renderer.drawBoard(BOARD, this.SNAKE_X, this.SNAKE_Y);
     }
   }
@@ -64,7 +71,7 @@ export class Game {
     }
     
     // --- Render the scene ---
-    this.renderer.drawBoard(BOARD, this.SNAKE_X, this.SNAKE_Y)
+    this.renderer.drawBoard(BOARD, this.SNAKE_X, this.SNAKE_Y);
 
     requestAnimationFrame(this.loop);
   };
