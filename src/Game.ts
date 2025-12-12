@@ -11,6 +11,8 @@ const START_Y = 7; // zero-indexed
 let BOARD: number[][] = Array.from({ length: BOARD_HEIGHT }, () => Array(BOARD_WIDTH).fill(0));
 let SNAKE: any[][];
 
+let directionChanges: number[][] = [];
+
 const MOVE_KEYS: string[] = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'w', 'a', 's', 'd']
 
 export class Game {
@@ -55,7 +57,10 @@ export class Game {
   }
 
   moveSnake() {
-    if (SNAKE[0][2] == 'up' && (this.SNAKE_HEAD_Y > 0)) {
+    const newDirection = SNAKE[0][2];
+    directionChanges.push([SNAKE[0][0], SNAKE[0][1], SNAKE[0][2]]);
+    
+    if (newDirection == 'up' && (this.SNAKE_HEAD_Y > 0)) {
       SNAKE.forEach((cell) => {
         if (cell[2] == 'up') {
           cell[0] -= 0.25;
@@ -65,7 +70,7 @@ export class Game {
       this.SNAKE_HEAD_Y -= 0.25;
       return 1;
     }
-    if (SNAKE[0][2] == 'down' && (this.SNAKE_HEAD_Y < BOARD_HEIGHT - 1)) {
+    if (newDirection == 'down' && (this.SNAKE_HEAD_Y < BOARD_HEIGHT - 1)) {
       SNAKE.forEach((cell) => {
         if (cell[2] == 'down') {
           cell[0] += 0.25;
@@ -76,7 +81,7 @@ export class Game {
       this.renderer.drawBoard(BOARD, this.SNAKE_HEAD_X, this.SNAKE_HEAD_Y, SNAKE);
       return 1;
     }
-    if (SNAKE[0][2] == 'left' && (this.SNAKE_HEAD_X > 0)) {
+    if (newDirection == 'left' && (this.SNAKE_HEAD_X > 0)) {
       SNAKE.forEach((cell) => {
         if (cell[2] == 'left') {
           cell[1] -= 0.25;
@@ -86,7 +91,7 @@ export class Game {
       this.SNAKE_HEAD_X -= 0.25;
       return 1;
     }
-    if (SNAKE[0][2] == 'right' && (this.SNAKE_HEAD_X < BOARD_WIDTH - 1)) {
+    if (newDirection == 'right' && (this.SNAKE_HEAD_X < BOARD_WIDTH - 1)) {
       SNAKE.forEach((cell) => {
         if (cell[2] == 'right') {
           cell[1] += 0.25;
