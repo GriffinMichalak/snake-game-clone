@@ -11,7 +11,7 @@ const START_Y = 7; // zero-indexed
 let BOARD: number[][] = Array.from({ length: BOARD_HEIGHT }, () => Array(BOARD_WIDTH).fill(0));
 let SNAKE: any[][];
 
-let directionChanges: number[][] = [];
+const directionChanges = new Map();
 
 const MOVE_KEYS: string[] = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'w', 'a', 's', 'd']
 
@@ -58,51 +58,59 @@ export class Game {
 
   moveSnake() {
     const newDirection = SNAKE[0][2];
-    directionChanges.push([SNAKE[0][0], SNAKE[0][1], SNAKE[0][2]]);
-    
-    if (newDirection == 'up' && (this.SNAKE_HEAD_Y > 0)) {
-      SNAKE.forEach((cell) => {
-        if (cell[2] == 'up') {
-          cell[0] -= 0.25;
-        }
-      });
+    const headKey = `${SNAKE[0][0]},${SNAKE[0][1]}`;
+    directionChanges.set(headKey, SNAKE[0][2]);
 
-      this.SNAKE_HEAD_Y -= 0.25;
-      return 1;
+    if (newDirection == 'up' && !(this.SNAKE_HEAD_Y > 0)) {
+      return -1;
     }
-    if (newDirection == 'down' && (this.SNAKE_HEAD_Y < BOARD_HEIGHT - 1)) {
-      SNAKE.forEach((cell) => {
-        if (cell[2] == 'down') {
-          cell[0] += 0.25;
-        }
-      });
-
-      this.SNAKE_HEAD_Y += 0.25;
-      this.renderer.drawBoard(BOARD, this.SNAKE_HEAD_X, this.SNAKE_HEAD_Y, SNAKE);
-      return 1;
+    else if (newDirection == 'down' && !(this.SNAKE_HEAD_Y < BOARD_HEIGHT - 1)) {
+      return -1;
     }
-    if (newDirection == 'left' && (this.SNAKE_HEAD_X > 0)) {
-      SNAKE.forEach((cell) => {
-        if (cell[2] == 'left') {
-          cell[1] -= 0.25;
-        }
-      });
-
-      this.SNAKE_HEAD_X -= 0.25;
-      return 1;
+    else if (newDirection == 'left' && !(this.SNAKE_HEAD_X > 0)) {
+      return -1;
     }
-    if (newDirection == 'right' && (this.SNAKE_HEAD_X < BOARD_WIDTH - 1)) {
-      SNAKE.forEach((cell) => {
-        if (cell[2] == 'right') {
-          cell[1] += 0.25;
-        }
-      });
-
-      this.SNAKE_HEAD_X += 0.25;
-      return 1;
+    else if (newDirection == 'right' && !(this.SNAKE_HEAD_X < BOARD_WIDTH - 1)) {
+      return -1;
     }
     else {
-      return -1;
+      SNAKE.forEach((cell) => {
+        const cellKey = `${cell[0]},${cell[1]}`;
+        if (directionChanges.has(cellKey)) {
+          cell[2] = directionChanges.get(cellKey);
+        }
+        switch(cell[2]) {
+          case 'up':
+            cell[0] -= 0.25;
+            break;
+          case 'down':
+            cell[0] += 0.25;
+            break;
+          case 'left':
+            cell[1] -= 0.25;
+            break;
+          case 'right':
+            cell[1] += 0.25;
+            break;
+        }
+      });
+
+      switch (SNAKE[0][2]) {
+        case 'up':
+          this.SNAKE_HEAD_Y -= 0.25;
+          break;
+        case 'down':
+          this.SNAKE_HEAD_Y += 0.25;
+          break;
+        case 'left':
+          this.SNAKE_HEAD_X -= 0.25;
+          break;
+        case 'right':
+          this.SNAKE_HEAD_X += 0.25;
+          break;
+      }
+      this.renderer.drawBoard(BOARD, this.SNAKE_HEAD_X, this.SNAKE_HEAD_Y, SNAKE);
+      return 1;
     }
   }
 
