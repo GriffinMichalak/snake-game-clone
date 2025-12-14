@@ -12,14 +12,15 @@ let BOARD: number[][] = Array.from({ length: BOARD_HEIGHT }, () => Array(BOARD_W
 let SNAKE: any[][];
 
 const directionChanges = new Map();
-
-const MOVE_KEYS: string[] = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'w', 'a', 's', 'd']
+const MOVE_KEYS: string[] = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'w', 'a', 's', 'd'];
 
 export class Game {
   private lastTime = 0;
   private renderer: Renderer;
   private input: Input;
   private timeElapsed: number;
+  private moveProgress: number = 0;
+  private direction: string = 'right';
 
   constructor(
     private canvas: HTMLCanvasElement,
@@ -31,7 +32,7 @@ export class Game {
 
     const foodCoord = this.generateFood([[START_X, START_Y]])
     BOARD[foodCoord[1]][foodCoord[0]] = 1;
-    SNAKE = [[START_Y, START_X, 'right']];
+    SNAKE = [[START_Y, START_X], [START_Y, START_X - 1], [START_Y, START_X - 2]];
   }
   
   generateFood(exclude: Array<number[]>): [number, number] {
@@ -55,39 +56,46 @@ export class Game {
   }
 
   moveSnake() {
-    const newDirection = SNAKE[0][2];
-    const headKey = `${SNAKE[0][0]},${SNAKE[0][1]}`;
-    directionChanges.set(headKey, SNAKE[0][2]);
-
     const snakeOnEdge: boolean = (
-      (newDirection == 'up' && !(SNAKE[0][0] > 0)) ||
-      (newDirection == 'down' && !(SNAKE[0][0] < BOARD_HEIGHT - 1)) ||
-      (newDirection == 'left' && !(SNAKE[0][1] > 0)) || 
-      (newDirection == 'right' && !(SNAKE[0][1] < BOARD_WIDTH - 1))
+      (this.direction == 'up' && !(SNAKE[0][0] > 0)) ||
+      (this.direction == 'down' && !(SNAKE[0][0] < BOARD_HEIGHT - 1)) ||
+      (this.direction == 'left' && !(SNAKE[0][1] > 0)) || 
+      (this.direction == 'right' && !(SNAKE[0][1] < BOARD_WIDTH - 1))
     );
 
     if (snakeOnEdge) {
       return -1;
     }
+    this.moveProgress += 0.25;
 
-    else {
-      switch (SNAKE[0][2]) {
-        case 'up':
-          SNAKE[0][0] -= 0.25;
-          break;
-        case 'down':
-          SNAKE[0][0] += 0.25;
-          break;
-        case 'left':
-          SNAKE[0][1] -= 0.25;
-          break;
-        case 'right':
-          SNAKE[0][1] += 0.25;
-          break;
-      }
-      this.renderer.drawBoard(BOARD, SNAKE[0][1], SNAKE[0][0], SNAKE);
-      return 1;
+    if (this.moveProgress >= 1.0) {
+      this.moveProgress -= 1.0; 
     }
+    const headX = SNAKE[0][1];
+    const headY = SNAKE[0][0];
+    let dx = 0, dy = 0;
+
+    switch (this.direction) {
+      case 'up':
+        dx = 0, dy = -1;
+        break;
+      case 'down':
+        dx = 0, dy = 1;
+        break;
+      case 'left':
+        dx = -1, dy = 0;
+        break;
+      case 'right':
+        dx = 1, dy = 0;
+        break;
+    }
+
+    const newHead = [headY + dy, headX + dx];
+    SNAKE.unshift(newHead); // add new head to the front of the array
+    SNAKE.pop(); // remove the tail (unless growing, to be handled later)
+
+    this.renderer.drawBoard(BOARD, newHead[1], newHead[0], SNAKE);
+    return 1;
   }
 
   private loop = (timestamp: number) => {
@@ -97,21 +105,21 @@ export class Game {
 
     const snakeOnGrid: boolean = SNAKE[0][0] % 1 == 0 && SNAKE[0][1] % 1 == 0;
 
-    if ((this.input.isPressed('ArrowUp') || this.input.isPressed('w')) && snakeOnGrid && SNAKE[0][2] != 'down') {
-      SNAKE[0][2] = 'up';
+    if ((this.input.isPressed('ArrowUp') || this.input.isPressed('w')) && snakeOnGrid && this.direction != 'down') {
+      this.direction = 'up';
     }
-    if ((this.input.isPressed('ArrowDown') || this.input.isPressed('s')) && snakeOnGrid && SNAKE[0][2] != 'up') {
-      SNAKE[0][2] = 'down';
+    if ((this.input.isPressed('ArrowDown') || this.input.isPressed('s')) && snakeOnGrid && this.direction != 'up') {
+      this.direction = 'down';
     }
-    if ((this.input.isPressed('ArrowLeft') || this.input.isPressed('a')) && snakeOnGrid && SNAKE[0][2] != 'right') {
-      SNAKE[0][2] = 'left';
+    if ((this.input.isPressed('ArrowLeft') || this.input.isPressed('a')) && snakeOnGrid && this.direction != 'right') {
+      this.direction = 'left';
     }
-    if ((this.input.isPressed('ArrowRight') || this.input.isPressed('d')) && snakeOnGrid && SNAKE[0][2] != 'left') {
-      SNAKE[0][2] = 'right';
+    if ((this.input.isPressed('ArrowRight') || this.input.isPressed('d')) && snakeOnGrid && this.direction != 'left') {
+      this.direction = 'right';
     }
 
     // --- Update will go here later ---
-    if (this.timeElapsed > 20) {
+    if (this.timeElapsed > 60) {
       if (this.moveSnake() == 1){
         this.timeElapsed = 0;
       }
