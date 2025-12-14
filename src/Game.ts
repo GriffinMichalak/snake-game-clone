@@ -31,10 +31,8 @@ export class Game {
 
     const foodCoord = this.generateFood([[START_X, START_Y]])
     BOARD[foodCoord[1]][foodCoord[0]] = 1;
-    SNAKE = [[this.SNAKE_HEAD_Y, this.SNAKE_HEAD_X, 'right'], [this.SNAKE_HEAD_Y, this.SNAKE_HEAD_X - 1, 'right'], [this.SNAKE_HEAD_Y, this.SNAKE_HEAD_X - 2, 'right']];
+    SNAKE = [[START_Y, START_X, 'right']];
   }
-  SNAKE_HEAD_X: number = START_X;
-  SNAKE_HEAD_Y: number = START_Y;
   
   generateFood(exclude: Array<number[]>): [number, number] {
     let x = Math.floor(Math.random() * BOARD_WIDTH);
@@ -48,7 +46,7 @@ export class Game {
   }
 
   start() {
-    this.renderer.drawBoard(BOARD, this.SNAKE_HEAD_X, this.SNAKE_HEAD_Y, SNAKE);
+    this.renderer.drawBoard(BOARD, SNAKE[0][1], SNAKE[0][0], SNAKE);
     document.addEventListener('keydown', (event) => {
       if (MOVE_KEYS.includes(event.key)) {
         requestAnimationFrame(this.loop);
@@ -61,55 +59,33 @@ export class Game {
     const headKey = `${SNAKE[0][0]},${SNAKE[0][1]}`;
     directionChanges.set(headKey, SNAKE[0][2]);
 
-    if (newDirection == 'up' && !(this.SNAKE_HEAD_Y > 0)) {
-      return -1;
-    }
-    else if (newDirection == 'down' && !(this.SNAKE_HEAD_Y < BOARD_HEIGHT - 1)) {
-      return -1;
-    }
-    else if (newDirection == 'left' && !(this.SNAKE_HEAD_X > 0)) {
-      return -1;
-    }
-    else if (newDirection == 'right' && !(this.SNAKE_HEAD_X < BOARD_WIDTH - 1)) {
-      return -1;
-    }
-    else {
-      SNAKE.forEach((cell) => {
-        const cellKey = `${cell[0]},${cell[1]}`;
-        if (directionChanges.has(cellKey)) {
-          cell[2] = directionChanges.get(cellKey);
-        }
-        switch(cell[2]) {
-          case 'up':
-            cell[0] -= 0.25;
-            break;
-          case 'down':
-            cell[0] += 0.25;
-            break;
-          case 'left':
-            cell[1] -= 0.25;
-            break;
-          case 'right':
-            cell[1] += 0.25;
-            break;
-        }
-      });
+    const snakeOnEdge: boolean = (
+      (newDirection == 'up' && !(SNAKE[0][0] > 0)) ||
+      (newDirection == 'down' && !(SNAKE[0][0] < BOARD_HEIGHT - 1)) ||
+      (newDirection == 'left' && !(SNAKE[0][1] > 0)) || 
+      (newDirection == 'right' && !(SNAKE[0][1] < BOARD_WIDTH - 1))
+    );
 
+    if (snakeOnEdge) {
+      return -1;
+    }
+
+    else {
       switch (SNAKE[0][2]) {
         case 'up':
-          this.SNAKE_HEAD_Y -= 0.25;
+          SNAKE[0][0] -= 0.25;
           break;
         case 'down':
-          this.SNAKE_HEAD_Y += 0.25;
+          SNAKE[0][0] += 0.25;
           break;
         case 'left':
-          this.SNAKE_HEAD_X -= 0.25;
+          SNAKE[0][1] -= 0.25;
           break;
         case 'right':
-          this.SNAKE_HEAD_X += 0.25;
+          SNAKE[0][1] += 0.25;
           break;
       }
-      this.renderer.drawBoard(BOARD, this.SNAKE_HEAD_X, this.SNAKE_HEAD_Y, SNAKE);
+      this.renderer.drawBoard(BOARD, SNAKE[0][1], SNAKE[0][0], SNAKE);
       return 1;
     }
   }
@@ -146,7 +122,7 @@ export class Game {
     }
     
     // --- Render the scene ---
-    this.renderer.drawBoard(BOARD, this.SNAKE_HEAD_X, this.SNAKE_HEAD_Y, SNAKE);
+    this.renderer.drawBoard(BOARD, SNAKE[0][1], SNAKE[0][0], SNAKE);
 
     requestAnimationFrame(this.loop);
   };
