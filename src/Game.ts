@@ -1,39 +1,31 @@
 import { Renderer } from "./Renderer.js";
 import { Input } from "./Input.js";
-
-
-const BOARD_HEIGHT = 15;
-const BOARD_WIDTH = 17;
-
-const START_X = 3; // zero-indexed
-const START_Y = 7; // zero-indexed
+import { BOARD_HEIGHT, BOARD_WIDTH, START_X, START_Y, MOVE_KEYS } from "./Constants.js";
 
 let BOARD: number[][] = Array.from({ length: BOARD_HEIGHT }, () => Array(BOARD_WIDTH).fill(0));
-let SNAKE: any[][];
-
-const directionChanges = new Map();
-const MOVE_KEYS: string[] = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'w', 'a', 's', 'd'];
-
 export class Game {
-  private lastTime = 0;
   private renderer: Renderer;
   private input: Input;
+  private snake: number[][];
+  private direction: string;
+  private foodCoord: number[];
+  private gameOver: boolean;
+  private lastTime: number;
   private timeElapsed: number;
-  private moveProgress: number = 0;
-  private direction: string = 'right';
-  private gameOver: boolean = false;
-  private foodCoord = this.generateFood([[START_X, START_Y]]);
+  private moveProgress: number;
 
-  constructor(
-    private canvas: HTMLCanvasElement,
-    private ctx: CanvasRenderingContext2D
-  ) {
+  constructor(private canvas: HTMLCanvasElement, private ctx: CanvasRenderingContext2D) {
     this.renderer = new Renderer(ctx, canvas.width, canvas.height);
     this.input = new Input();
+    this.snake = [[START_Y, START_X], [START_Y, START_X - 1], [START_Y, START_X - 2]];
+    this.direction = 'right';
+    this.foodCoord = this.generateFood([[START_X, START_Y]]);
+    this.gameOver = false;
+    this.lastTime = 0;
     this.timeElapsed = 0;
-    BOARD[this.foodCoord[1]][this.foodCoord[0]] = 1;
+    this.moveProgress = 0;
 
-    SNAKE = [[START_Y, START_X], [START_Y, START_X - 1], [START_Y, START_X - 2]];
+    BOARD[this.foodCoord[1]][this.foodCoord[0]] = 1;
   }
   
   generateFood(exclude: Array<number[]>): [number, number] {
@@ -48,11 +40,11 @@ export class Game {
   }
 
   growSnake() {
-    SNAKE.push([-10,-10]);
+    this.snake.push([-10,-10]);
   }
 
   start() {
-    this.renderer.drawBoard(BOARD, SNAKE[0][1], SNAKE[0][0], SNAKE);
+    this.renderer.drawBoard(BOARD, this.snake[0][1], this.snake[0][0], this.snake);
     document.addEventListener('keydown', (event) => {
       if (MOVE_KEYS.includes(event.key)) {
         requestAnimationFrame(this.loop);
@@ -61,9 +53,9 @@ export class Game {
   }
 
   snakeOverlap(): boolean {
-    for (let i = 1; i < SNAKE.length; i++) {
-      const cell = SNAKE[i];
-      if (SNAKE[0][0] == cell[0] && SNAKE[0][1] == cell[1]) {
+    for (let i = 1; i < this.snake.length; i++) {
+      const cell = this.snake[i];
+      if (this.snake[0][0] == cell[0] && this.snake[0][1] == cell[1]) {
         return true;
       }
     }
@@ -72,10 +64,10 @@ export class Game {
 
   moveSnake() {
     const snakeOnEdge: boolean = (
-      (this.direction == 'up' && !(SNAKE[0][0] > 0)) ||
-      (this.direction == 'down' && !(SNAKE[0][0] < BOARD_HEIGHT - 1)) ||
-      (this.direction == 'left' && !(SNAKE[0][1] > 0)) || 
-      (this.direction == 'right' && !(SNAKE[0][1] < BOARD_WIDTH - 1))
+      (this.direction == 'up' && !(this.snake[0][0] > 0)) ||
+      (this.direction == 'down' && !(this.snake[0][0] < BOARD_HEIGHT - 1)) ||
+      (this.direction == 'left' && !(this.snake[0][1] > 0)) || 
+      (this.direction == 'right' && !(this.snake[0][1] < BOARD_WIDTH - 1))
     );
 
     if (snakeOnEdge || this.snakeOverlap()) {
@@ -86,8 +78,8 @@ export class Game {
     if (this.moveProgress >= 1.0) {
       this.moveProgress -= 1.0; 
     }
-    const headX = SNAKE[0][1];
-    const headY = SNAKE[0][0];
+    const headX = this.snake[0][1];
+    const headY = this.snake[0][0];
     let dx = 0, dy = 0;
 
     switch (this.direction) {
@@ -106,10 +98,10 @@ export class Game {
     }
 
     const newHead = [headY + dy, headX + dx];
-    SNAKE.unshift(newHead); // add new head to the front of the array
-    SNAKE.pop(); // remove the tail (unless growing, to be handled later)
+    this.snake.unshift(newHead); // add new head to the front of the array
+    this.snake.pop(); // remove the tail (unless growing, to be handled later)
 
-    this.renderer.drawBoard(BOARD, newHead[1], newHead[0], SNAKE);
+    this.renderer.drawBoard(BOARD, newHead[1], newHead[0], this.snake);
     return 1;
   }
 
@@ -122,12 +114,12 @@ export class Game {
     this.lastTime = timestamp;
     this.timeElapsed += deltaTime;
 
-    const snakeOnGrid: boolean = SNAKE[0][0] % 1 == 0 && SNAKE[0][1] % 1 == 0;
+    const snakeOnGrid: boolean = this.snake[0][0] % 1 == 0 && this.snake[0][1] % 1 == 0;
 
-    if (snakeOnGrid && SNAKE[0][0] == this.foodCoord[1] && SNAKE[0][1] == this.foodCoord[0]) {
+    if (snakeOnGrid && this.snake[0][0] == this.foodCoord[1] && this.snake[0][1] == this.foodCoord[0]) {
       BOARD[this.foodCoord[1]][this.foodCoord[0]] = 0;
       this.growSnake();
-      this.foodCoord = this.generateFood(SNAKE);
+      this.foodCoord = this.generateFood(this.snake);
       BOARD[this.foodCoord[1]][this.foodCoord[0]] = 1;
     }
 
@@ -157,7 +149,7 @@ export class Game {
     }
     
     // --- Render the scene ---
-    this.renderer.drawBoard(BOARD, SNAKE[0][1], SNAKE[0][0], SNAKE);
+    this.renderer.drawBoard(BOARD, this.snake[0][1], this.snake[0][0], this.snake);
 
     requestAnimationFrame(this.loop);
   };

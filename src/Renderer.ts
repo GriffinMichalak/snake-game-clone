@@ -1,9 +1,6 @@
-import { Colors } from "./Colors.js";
+import { Colors, BOARD_HEIGHT, BOARD_WIDTH } from "./Constants.js";
 
-const BOARD_HEIGHT = 15;
-const BOARD_WIDTH = 17;
-
-const margin = 23;
+const MARGIN = 23;
 export class Renderer {
   constructor(
     private ctx: CanvasRenderingContext2D,
@@ -18,8 +15,8 @@ export class Renderer {
     this.ctx.fillRect(0, 0, this.width, this.height);
 
     // tiled board
-    const grid_height = this.height - 2 * margin;
-    const grid_width = this.width - 2 * margin;
+    const grid_height = this.height - 2 * MARGIN;
+    const grid_width = this.width - 2 * MARGIN;
 
     const cell_height = (grid_height) / BOARD_HEIGHT;
     const cell_width = (grid_width) / BOARD_WIDTH;
@@ -29,8 +26,8 @@ export class Renderer {
     // draw grid
     for (let row = 0; row < BOARD_HEIGHT; row++) {
       for (let col = 0; col < BOARD_WIDTH; col++) {
-        const x = margin + col * cell_width;
-        const y = margin + row * cell_height;
+        const x = MARGIN + col * cell_width;
+        const y = MARGIN + row * cell_height;
         isLightGreen = !isLightGreen;
         if (board[row][col] == 0) {
           // draw grid background
@@ -42,16 +39,16 @@ export class Renderer {
           this.ctx.fillStyle = Colors.FOOD_COLOR;
           this.ctx.fillRect(x, y, cell_width, cell_height);
         }
-        this.drawSnake(snake_x, snake_y, cell_width, cell_height, margin, snake);
+        this.drawSnake(snake_x, snake_y, cell_width, cell_height, MARGIN, snake);
       }
     }
   }
 
-  drawSnake(x: number, y: number, cell_width: number, cell_height: number, margin:number, snake: number[][]) {
+  drawSnake(x: number, y: number, cell_width: number, cell_height: number, margin: number, snake: number[][]) {
     this.ctx.fillStyle = Colors.SNAKE_COLOR;
 
     snake.forEach((cell) => {
-      this.ctx.fillRect(margin + cell[1] * cell_height, margin + cell[0] * cell_width, cell_width, cell_height);
+      this.ctx.fillRect(MARGIN + cell[1] * cell_height, MARGIN + cell[0] * cell_width, cell_width, cell_height);
     })
   }
 
