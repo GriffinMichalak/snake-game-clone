@@ -22,6 +22,7 @@ export class Game {
   private moveProgress: number = 0;
   private direction: string = 'right';
   private gameOver: boolean = false;
+  private foodCoord = this.generateFood([[START_X, START_Y]]);
 
   constructor(
     private canvas: HTMLCanvasElement,
@@ -30,9 +31,8 @@ export class Game {
     this.renderer = new Renderer(ctx, canvas.width, canvas.height);
     this.input = new Input();
     this.timeElapsed = 0;
+    BOARD[this.foodCoord[1]][this.foodCoord[0]] = 1;
 
-    const foodCoord = this.generateFood([[START_X, START_Y]])
-    BOARD[foodCoord[1]][foodCoord[0]] = 1;
     SNAKE = [[START_Y, START_X], [START_Y, START_X - 1], [START_Y, START_X - 2]];
   }
   
@@ -44,7 +44,11 @@ export class Game {
       x = Math.floor(Math.random() * BOARD_WIDTH);
       y = Math.floor(Math.random() * BOARD_HEIGHT);
     }
-    return [x, y]
+    return [x, y];
+  }
+
+  growSnake() {
+    SNAKE.push([-10,-10]);
   }
 
   start() {
@@ -56,6 +60,16 @@ export class Game {
     });
   }
 
+  snakeOverlap(): boolean {
+    for (let i = 1; i < SNAKE.length; i++) {
+      const cell = SNAKE[i];
+      if (SNAKE[0][0] == cell[0] && SNAKE[0][1] == cell[1]) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   moveSnake() {
     const snakeOnEdge: boolean = (
       (this.direction == 'up' && !(SNAKE[0][0] > 0)) ||
@@ -64,7 +78,7 @@ export class Game {
       (this.direction == 'right' && !(SNAKE[0][1] < BOARD_WIDTH - 1))
     );
 
-    if (snakeOnEdge) {
+    if (snakeOnEdge || this.snakeOverlap()) {
       return -1;
     }
     this.moveProgress += 0.25;
@@ -103,12 +117,19 @@ export class Game {
     if (this.gameOver) {
       return;
     }
-    
+
     const deltaTime = timestamp - this.lastTime;
     this.lastTime = timestamp;
     this.timeElapsed += deltaTime;
 
     const snakeOnGrid: boolean = SNAKE[0][0] % 1 == 0 && SNAKE[0][1] % 1 == 0;
+
+    if (snakeOnGrid && SNAKE[0][0] == this.foodCoord[1] && SNAKE[0][1] == this.foodCoord[0]) {
+      BOARD[this.foodCoord[1]][this.foodCoord[0]] = 0;
+      this.growSnake();
+      this.foodCoord = this.generateFood(SNAKE);
+      BOARD[this.foodCoord[1]][this.foodCoord[0]] = 1;
+    }
 
     if ((this.input.isPressed('ArrowUp') || this.input.isPressed('w')) && snakeOnGrid && this.direction != 'down') {
       this.direction = 'up';
