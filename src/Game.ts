@@ -62,6 +62,22 @@ export class Game {
     });
   }
 
+  reset() {
+    BOARD[this.foodCoord[1]][this.foodCoord[0]] = 0;
+    this.renderer = new Renderer(this.ctx, this.canvas.width, this.canvas.height);
+    this.input = new Input();
+    this.snake = [[START_Y, START_X], [START_Y, START_X - 1], [START_Y, START_X - 2]];
+    this.direction = 'right';
+    this.foodCoord = this.generateFood([[START_X, START_Y]]);
+    this.gameOver = false;
+    this.score = 0;
+    this.lastTime = 0;
+    this.timeElapsed = 0;
+    this.moveProgress = 0;
+
+    BOARD[this.foodCoord[1]][this.foodCoord[0]] = 1;
+  }
+
   snakeOverlap(): boolean {
     for (let i = 1; i < this.snake.length; i++) {
       const cell = this.snake[i];
@@ -158,6 +174,12 @@ export class Game {
         this.highScore = Math.max(this.score, this.highScore);
         const menu = document.getElementById('highscore')!;
         menu.textContent = `${this.highScore}`
+        window.addEventListener('keydown', (e) => {
+          if (e.key === 'r') {
+            this.reset();
+            this.start();
+          }
+        }, { once: true });
         return;
       }
     }
