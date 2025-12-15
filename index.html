@@ -8,18 +8,44 @@
 </head>
 <body>
   <div>
+    <audio id="down-audio">
+      <source src="media/audio/down.mp3" type="audio/mp3">
+      Your browser does not support the audio element.
+    </audio>
+    <audio id="left-audio">
+      <source src="media/audio/left.mp3" type="audio/mp3">
+      Your browser does not support the audio element.
+    </audio>
+    <audio id="right-audio">
+      <source src="media/audio/right.mp3" type="audio/mp3">
+      Your browser does not support the audio element.
+    </audio>
+    <audio id="up-audio">
+      <source src="media/audio/up.mp3" type="audio/mp3">
+      Your browser does not support the audio element.
+    </audio>
+    <audio id="chomp-audio">
+      <source src="media/audio/chomp.mp3" type="audio/mp3">
+      Your browser does not support the audio element.
+    </audio>
+    <audio id="gameover-audio">
+      <source src="media/audio/gameover.mp3" type="audio/mp3">
+      Your browser does not support the audio element.
+    </audio>
+  </div>
+  <div>
     <div id="menu">
       <div id="score-panel" style="display: flex; align-items: center;">
-        <img src="images/apple.png" width="25%" height="25%" alt="apple" style="margin-right: 8px">
+        <img src="media/images/apple.png" width="25%" height="25%" alt="apple" style="margin-right: 8px">
         <span id="score">0</span>
       </div>
       <div id="highscore-panel" style="display: flex; align-items: center;">
-        <img src="images/trophy.png" width="25%" height="25%" alt="trophy" style="margin-right: 8px;">
+        <img src="media/images/trophy.png" width="25%" height="25%" alt="trophy" style="margin-right: 8px;">
         <span id="highscore">0</span>
       </div>
       <div id="icon-panel" style="display: flex; align-items: center; margin-left: 300px;">
-        <img src="icons/volume_up.svg" alt="" style="margin-right: 10px;">
-        <img src="icons/x.svg" alt="">
+        <img src="media/icons/volume_up.svg" alt="" style="margin-right: 10px;">
+        <img src="media/icons/x.svg" alt="">
       </div>
     </div>
     <canvas id="gameCanvas" width="617" height="550"></canvas>

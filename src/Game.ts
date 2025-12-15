@@ -88,6 +88,13 @@ export class Game {
     return false;
   }
 
+  playAudio(name: string) {
+    const x = document.getElementById(`${name}-audio`); 
+    if (x instanceof HTMLAudioElement) {
+      x.play();
+    }
+  }
+
   moveSnake() {
     const snakeOnEdge: boolean = (
       (this.direction == 'up' && !(this.snake[0][0] > 0)) ||
@@ -97,6 +104,7 @@ export class Game {
     );
 
     if (snakeOnEdge || this.snakeOverlap()) {
+      this.playAudio('gameover');
       return -1;
     }
     this.moveProgress += 0.25;
@@ -143,6 +151,7 @@ export class Game {
     const snakeOnGrid: boolean = this.snake[0][0] % 1 == 0 && this.snake[0][1] % 1 == 0;
 
     if (snakeOnGrid && this.snake[0][0] == this.foodCoord[1] && this.snake[0][1] == this.foodCoord[0]) {
+      this.playAudio('chomp');
       BOARD[this.foodCoord[1]][this.foodCoord[0]] = 0;
       this.growSnake();
       this.increaseScore();
@@ -152,28 +161,34 @@ export class Game {
 
     if ((this.input.isPressed('ArrowUp') || this.input.isPressed('w')) && snakeOnGrid && this.direction != 'down') {
       this.direction = 'up';
+      this.playAudio('up');
     }
     if ((this.input.isPressed('ArrowDown') || this.input.isPressed('s')) && snakeOnGrid && this.direction != 'up') {
       this.direction = 'down';
+      this.playAudio('down');
     }
     if ((this.input.isPressed('ArrowLeft') || this.input.isPressed('a')) && snakeOnGrid && this.direction != 'right') {
       this.direction = 'left';
+      this.playAudio('left');
     }
     if ((this.input.isPressed('ArrowRight') || this.input.isPressed('d')) && snakeOnGrid && this.direction != 'left') {
       this.direction = 'right';
+      this.playAudio('right');
     }
 
-    if (this.timeElapsed > 60) {
+    if (this.timeElapsed > 100) {
       if (this.moveSnake() == 1){
         this.timeElapsed = 0;
       }
       else {
         // game end logic 
-        this.renderer.drawGameOver();
         this.gameOver = true;
         this.highScore = Math.max(this.score, this.highScore);
         const menu = document.getElementById('highscore')!;
-        menu.textContent = `${this.highScore}`
+        menu.textContent = `${this.highScore}`;
+        setTimeout(() => {
+          this.renderer.drawGameOver();
+        }, 1200);
         window.addEventListener('keydown', (e) => {
           if (e.key === 'r') {
             this.reset();
