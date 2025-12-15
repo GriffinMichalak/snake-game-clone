@@ -3,6 +3,7 @@ import { Input } from "./Input.js";
 import { BOARD_HEIGHT, BOARD_WIDTH, START_X, START_Y, MOVE_KEYS } from "./Constants.js";
 
 let BOARD: number[][] = Array.from({ length: BOARD_HEIGHT }, () => Array(BOARD_WIDTH).fill(0));
+
 export class Game {
   private renderer: Renderer;
   private input: Input;
@@ -29,9 +30,27 @@ export class Game {
     this.lastTime = 0;
     this.timeElapsed = 0;
     this.moveProgress = 0;
-    this.volumeOn = false;
+    this.volumeOn = true;
 
     BOARD[this.foodCoord[1]][this.foodCoord[0]] = 1;
+
+    const volumeButton = document.getElementById("volume-icon")!;
+    volumeButton.addEventListener("click", () => {
+      this.volumeToggle();
+    });
+  }
+
+  volumeToggle() {
+    const volumeIcon = document.getElementById('volume-icon') as HTMLImageElement;
+    this.volumeOn = !this.volumeOn;
+    if (volumeIcon) {
+      if (this.volumeOn) {
+        volumeIcon.src = "media/icons/volume_up.svg";
+      } else {
+        volumeIcon.src = "media/icons/volume_off.svg";
+      }
+      volumeIcon.style.display = "inline";
+    }
   }
   
   generateFood(exclude: Array<number[]>): [number, number] {
