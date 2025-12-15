@@ -21,6 +21,7 @@ export class Game {
   private timeElapsed: number;
   private moveProgress: number = 0;
   private direction: string = 'right';
+  private gameOver: boolean = false;
 
   constructor(
     private canvas: HTMLCanvasElement,
@@ -99,6 +100,10 @@ export class Game {
   }
 
   private loop = (timestamp: number) => {
+    if (this.gameOver) {
+      return;
+    }
+    
     const deltaTime = timestamp - this.lastTime;
     this.lastTime = timestamp;
     this.timeElapsed += deltaTime;
@@ -125,6 +130,7 @@ export class Game {
       }
       else {
         this.renderer.drawGameOver();
+        this.gameOver = true;
         return;
       }
     }
