@@ -9,11 +9,13 @@
 <body>
   <div>
     <div id="menu">
-      <div id="score">
-        Score: 0
+      <div id="score-panel" style="display: flex; align-items: center;">
+        <img src="images/apple.png" width="25%" height="25%" alt="apple" style="margin-right: 8px">
+        <span id="score">0</span>
       </div>
-      <div id="highscore">
-        High: 0
+      <div id="highscore-panel" style="display: flex; align-items: center;">
+        <img src="images/trophy.png" width="25%" height="25%" alt="trophy" style="margin-right: 8px;">
+        <span id="score">0</span>
       </div>
     </div>
     <canvas id="gameCanvas" width="617" height="550"></canvas>

@@ -50,7 +50,7 @@ export class Game {
   increaseScore() {
     this.score += 1;
     const menu = document.getElementById('score')!;
-    menu.textContent = `Score: ${this.score}`
+    menu.textContent = `${this.score}`
   }
 
   start() {
@@ -157,7 +157,7 @@ export class Game {
         this.gameOver = true;
         this.highScore = Math.max(this.score, this.highScore);
         const menu = document.getElementById('highscore')!;
-        menu.textContent = `High: ${this.highScore}`
+        menu.textContent = `${this.highScore}`
         return;
       }
     }
