@@ -163,12 +163,12 @@ export class Game {
       this.direction = 'right';
     }
 
-    // --- Update will go here later ---
     if (this.timeElapsed > 60) {
       if (this.moveSnake() == 1){
         this.timeElapsed = 0;
       }
       else {
+        // game end logic 
         this.renderer.drawGameOver();
         this.gameOver = true;
         this.highScore = Math.max(this.score, this.highScore);
@@ -184,7 +184,6 @@ export class Game {
       }
     }
     
-    // --- Render the scene ---
     this.renderer.drawBoard(BOARD, this.snake[0][1], this.snake[0][0], this.snake);
 
     requestAnimationFrame(this.loop);
