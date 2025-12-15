@@ -10,6 +10,8 @@ export class Game {
   private direction: string;
   private foodCoord: number[];
   private gameOver: boolean;
+  private score: number;
+  private highScore: number;
   private lastTime: number;
   private timeElapsed: number;
   private moveProgress: number;
@@ -21,6 +23,8 @@ export class Game {
     this.direction = 'right';
     this.foodCoord = this.generateFood([[START_X, START_Y]]);
     this.gameOver = false;
+    this.score = 0;
+    this.highScore = 0;
     this.lastTime = 0;
     this.timeElapsed = 0;
     this.moveProgress = 0;
@@ -41,6 +45,12 @@ export class Game {
 
   growSnake() {
     this.snake.push([-10,-10]);
+  }
+
+  increaseScore() {
+    this.score += 1;
+    const menu = document.getElementById('score')!;
+    menu.textContent = `Score: ${this.score}`
   }
 
   start() {
@@ -119,6 +129,7 @@ export class Game {
     if (snakeOnGrid && this.snake[0][0] == this.foodCoord[1] && this.snake[0][1] == this.foodCoord[0]) {
       BOARD[this.foodCoord[1]][this.foodCoord[0]] = 0;
       this.growSnake();
+      this.increaseScore();
       this.foodCoord = this.generateFood(this.snake);
       BOARD[this.foodCoord[1]][this.foodCoord[0]] = 1;
     }
@@ -144,6 +155,9 @@ export class Game {
       else {
         this.renderer.drawGameOver();
         this.gameOver = true;
+        this.highScore = Math.max(this.score, this.highScore);
+        const menu = document.getElementById('highscore')!;
+        menu.textContent = `High: ${this.highScore}`
         return;
       }
     }

@@ -25,4 +25,10 @@ canvas {
   display:flex; 
   align-items:center; 
   justify-content:left;
+  padding: 0 24px;
+  box-sizing: border-box;
+}
+
+#highscore {
+  padding: 0 24px;
 }
