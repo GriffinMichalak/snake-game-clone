@@ -15,6 +15,7 @@ export class Game {
   private lastTime: number;
   private timeElapsed: number;
   private moveProgress: number;
+  private volumeOn: boolean;
 
   constructor(private canvas: HTMLCanvasElement, private ctx: CanvasRenderingContext2D) {
     this.renderer = new Renderer(ctx, canvas.width, canvas.height);
@@ -28,6 +29,7 @@ export class Game {
     this.lastTime = 0;
     this.timeElapsed = 0;
     this.moveProgress = 0;
+    this.volumeOn = false;
 
     BOARD[this.foodCoord[1]][this.foodCoord[0]] = 1;
   }
@@ -90,7 +92,7 @@ export class Game {
 
   playAudio(name: string) {
     const x = document.getElementById(`${name}-audio`); 
-    if (x instanceof HTMLAudioElement) {
+    if (this.volumeOn && x instanceof HTMLAudioElement) {
       x.play();
     }
   }
