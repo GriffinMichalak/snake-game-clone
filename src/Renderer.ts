@@ -29,15 +29,24 @@ export class Renderer {
         const x = MARGIN + col * cell_width;
         const y = MARGIN + row * cell_height;
         isLightGreen = !isLightGreen;
-        if (board[row][col] == 0) {
-          // draw grid background
-          this.ctx.fillStyle = isLightGreen ? Colors.LIGHT_GREEN : Colors.DARK_GREEN;
-          this.ctx.fillRect(x, y, cell_width, cell_height);
-        }
-        else if (board[row][col] == 1) {
+        this.ctx.fillStyle = isLightGreen ? Colors.LIGHT_GREEN : Colors.DARK_GREEN;
+        this.ctx.fillRect(x, y, cell_width, cell_height);
+        // draw grid background
+        if (board[row][col] == 1) {
           // draw food
-          this.ctx.fillStyle = Colors.FOOD_COLOR;
-          this.ctx.fillRect(x, y, cell_width, cell_height);
+          const img = new Image();
+          img.src = "media/images/apple.png";
+          if (img.complete) {
+            const w = cell_width * 0.75;
+            const h = cell_height * 0.9;
+            this.ctx.drawImage(img, x + (cell_width - w)/2, y + (cell_height - h)/2, w, h);
+          } else {
+            img.onload = () => {
+              this.ctx.drawImage(img, x, y, cell_width, cell_height);
+            };
+            this.ctx.fillStyle = Colors.FOOD_COLOR;
+            this.ctx.fillRect(x, y, cell_width, cell_height);
+          }
         }
       }
     }
@@ -45,7 +54,7 @@ export class Renderer {
     this.drawSnake(cell_width, cell_height, snake);
   }
 
-  drawSnake(cell_width: number, cell_height: number, snake: number[][]) {
+  drawSnake(cell_width: number, cell_height: number, snake: any[][]) {
     this.ctx.fillStyle = Colors.SNAKE_COLOR;
 
     snake.forEach((cell) => {
