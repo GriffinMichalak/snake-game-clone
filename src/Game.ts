@@ -220,21 +220,27 @@ export class Game {
       BOARD[this.foodCoord[1]][this.foodCoord[0]] = 1;
     }
 
-    if ((this.input.isPressed('ArrowUp') || this.input.isPressed('w')) && snakeOnGrid && this.snake[0][2] != 'down') {
+    let dirChanged = false;
+
+    if ((this.input.isPressed('ArrowUp') || this.input.isPressed('w')) && snakeOnGrid && this.snake[0][2] != 'down' && !dirChanged) {
       this.snake[0][2] = 'up';
       this.playAudio('up');
+      dirChanged = true;
     }
-    if ((this.input.isPressed('ArrowDown') || this.input.isPressed('s')) && snakeOnGrid && this.snake[0][2] != 'up') {
+    if ((this.input.isPressed('ArrowDown') || this.input.isPressed('s')) && snakeOnGrid && this.snake[0][2] != 'up' && !dirChanged) {
       this.snake[0][2] = 'down';
       this.playAudio('down');
+      dirChanged = true;
     }
-    if ((this.input.isPressed('ArrowLeft') || this.input.isPressed('a')) && snakeOnGrid && this.snake[0][2] != 'right') {
+    if ((this.input.isPressed('ArrowLeft') || this.input.isPressed('a')) && snakeOnGrid && this.snake[0][2] != 'right' && !dirChanged) {
       this.snake[0][2] = 'left';
       this.playAudio('left');
+      dirChanged = true;
     }
-    if ((this.input.isPressed('ArrowRight') || this.input.isPressed('d')) && snakeOnGrid && this.snake[0][2] != 'left') {
+    if ((this.input.isPressed('ArrowRight') || this.input.isPressed('d')) && snakeOnGrid && this.snake[0][2] != 'left' && !dirChanged) {
       this.snake[0][2] = 'right';
       this.playAudio('right');
+      dirChanged = true;
     }
 
     if (this.timeElapsed > 30) {
