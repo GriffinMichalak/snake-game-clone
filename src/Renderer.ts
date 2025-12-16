@@ -9,7 +9,7 @@ export class Renderer {
   ) {
   }
 
-  drawBoard(board: number[][], snake_x: number, snake_y: number, snake: number[][]) {
+  drawBoard(board: number[][], snake: number[][]) {
     // board outline
     this.ctx.fillStyle = Colors.OUTLINE_GREEN;
     this.ctx.fillRect(0, 0, this.width, this.height);
@@ -42,10 +42,10 @@ export class Renderer {
       }
     }
 
-    this.drawSnake(snake_x, snake_y, cell_width, cell_height, MARGIN, snake);
+    this.drawSnake(cell_width, cell_height, snake);
   }
 
-  drawSnake(x: number, y: number, cell_width: number, cell_height: number, margin: number, snake: number[][]) {
+  drawSnake(cell_width: number, cell_height: number, snake: number[][]) {
     this.ctx.fillStyle = Colors.SNAKE_COLOR;
 
     snake.forEach((cell) => {

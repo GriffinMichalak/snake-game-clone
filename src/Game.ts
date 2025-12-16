@@ -8,8 +8,6 @@ export class Game {
   private renderer: Renderer;
   private input: Input;
   private snake: any[][];
-  private prevSnake: any[][];
-  private direction: string;
   private foodCoord: number[];
   private gameOver: boolean;
   private score: number;
@@ -24,9 +22,6 @@ export class Game {
     this.renderer = new Renderer(ctx, canvas.width, canvas.height);
     this.input = new Input();
     this.snake = [[START_Y, START_X, 'right'], [START_Y, START_X - 1, 'right'], [START_Y, START_X - 2, 'right']];
-    // this.snake = [[START_Y, START_X]];
-    this.prevSnake = this.snake.map(segment => [...segment]); // snake deep copy
-    this.direction = 'right';
     this.foodCoord = this.generateFood([[START_X, START_Y]]);
     this.gameOver = false;
     this.score = 0;
@@ -102,7 +97,7 @@ export class Game {
   }
 
   start() {
-    this.renderer.drawBoard(BOARD, this.snake[0][1], this.snake[0][0], this.snake);
+    this.renderer.drawBoard(BOARD, this.snake);
     document.addEventListener('keydown', (event) => {
       if (MOVE_KEYS.includes(event.key)) {
         requestAnimationFrame(this.loop);
@@ -115,8 +110,6 @@ export class Game {
     this.renderer = new Renderer(this.ctx, this.canvas.width, this.canvas.height);
     this.input = new Input();
     this.snake = [[START_Y, START_X], [START_Y, START_X - 1], [START_Y, START_X - 2]];
-    this.prevSnake = this.snake.map(segment => [...segment]); // snake deep copy
-    this.direction = 'right';
     this.foodCoord = this.generateFood([[START_X, START_Y]]);
     this.gameOver = false;
     this.score = 0;
@@ -202,10 +195,6 @@ export class Game {
 
       curr[0] = pieceY + dy;
       curr[1] = pieceX + dx;
-  
-      // const newPiece = [pieceY + dy, pieceX + dx];
-      // this.snake.unshift(newPiece); // add new head to the front of the array
-      // this.snake.pop(); // remove the tail (unless growing, to be handled later)
     }
 
     return 1;
@@ -223,10 +212,10 @@ export class Game {
     const snakeOnGrid: boolean = this.snake[0][0] % 1 == 0 && this.snake[0][1] % 1 == 0;
 
     if (snakeOnGrid && this.snake[0][0] == this.foodCoord[1] && this.snake[0][1] == this.foodCoord[0]) {
+      this.increaseScore();
       this.playAudio('chomp');
       BOARD[this.foodCoord[1]][this.foodCoord[0]] = 0;
       this.growSnake();
-      this.increaseScore();
       this.foodCoord = this.generateFood(this.snake);
       BOARD[this.foodCoord[1]][this.foodCoord[0]] = 1;
     }
@@ -271,7 +260,7 @@ export class Game {
       }
     }
     
-    this.renderer.drawBoard(BOARD, this.snake[0][1], this.snake[0][0], this.snake);
+    this.renderer.drawBoard(BOARD, this.snake);
 
     requestAnimationFrame(this.loop);
   };
