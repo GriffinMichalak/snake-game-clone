@@ -34,17 +34,6 @@ dialog::backdrop {
 }
 
 #modal {
-  /* border: none;
-  border-radius: 8px;
-  padding: 0;
-  width: 20vw;
-  height: 50vh;
-  max-width: none;
-  box-sizing: border-box;
-  display: none;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center; */
   background-color: transparent;
   max-width: none;
   padding: 0;
@@ -53,6 +42,30 @@ dialog::backdrop {
 }
 
 .modal-content {
+  padding: 20px;
+  text-align: center;
+  background-color: #4dc1f9;
+  width: 18vw;
+  height: 45vh;
+  border-radius: 8px;
+  border: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+}
+
+/* settings */
+#settings-modal {
+  background-color: transparent;
+  max-width: none;
+  padding: 0;
+  flex-direction: column;
+  border: none;
+  display: none;
+}
+
+.settings-content {
   padding: 20px;
   text-align: center;
   background-color: #4dc1f9;

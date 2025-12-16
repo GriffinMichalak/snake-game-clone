@@ -7,16 +7,5 @@ export enum Colors {
   SNAKE_COLOR = "#4674ea"
 }
 
-export const BOARD_HEIGHT = 15;
-export const BOARD_WIDTH = 17;
-
-export const START_X = 3; // zero-indexed
-export const START_Y = 7; // zero-indexed
-
 export const MOVE_KEYS: string[] = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'w', 'a', 's', 'd'];
 export const START_MOVE_KEYS: string[] = ['ArrowUp', 'ArrowDown', 'ArrowRight', 'w', 's', 'd'];
-
-// speeds
-export const SLOW_SPEED = 20;
-export const NORMAL_SPEED = 30;
-export const FAST_SPEED = 15;

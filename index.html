@@ -75,6 +75,24 @@
         <span style="display: block; width: 100%; text-align: center;">Settings</span>
       </button>
    </dialog>
+
+  <!-- settings -->
+  <dialog id="settings-modal">
+    <div class="settings-content">
+    <form id="settings-form">
+      <!-- speed selection -->
+      <label for="speed-select" style="color: black; font-size: 1.2em; margin-right: 10px;">Speed:</label>
+      <select id="speed-select" name="speed" style="font-size: 1.1em; padding: 6px 12px; border-radius: 6px;">
+        <option value="slow">🐢</option>
+        <option value="normal" selected>🐍</option>
+        <option value="fast">🐇</option>
+      </select>
+    </form>
+    </div>
+    <button id="settings-back" style="display: flex; align-items: center; justify-content: center; width: 100%;">
+      <span style="display: block; width: 100%; text-align: center;">Back</span>
+    </button>
+  </dialog>
    
   <script type="module" src="./dist/main.js"></script>
 </body>

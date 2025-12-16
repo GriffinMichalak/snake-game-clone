@@ -1,4 +1,5 @@
-import { Colors, BOARD_HEIGHT, BOARD_WIDTH } from "./Constants.js";
+import { Colors } from "./Constants.js";
+import { BOARD_HEIGHT, BOARD_WIDTH } from "./Settings.js";
 
 const MARGIN = 23;
 export class Renderer {

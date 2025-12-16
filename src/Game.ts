@@ -1,6 +1,7 @@
 import { Renderer } from "./Renderer.js";
 import { Input } from "./Input.js";
-import { BOARD_HEIGHT, BOARD_WIDTH, START_X, START_Y, START_MOVE_KEYS } from "./Constants.js";
+import { START_MOVE_KEYS } from "./Constants.js";
+import { BOARD_HEIGHT, BOARD_WIDTH, START_X, START_Y, SPEED } from "./Settings.js";
 
 let BOARD: number[][] = Array.from({ length: BOARD_HEIGHT }, () => Array(BOARD_WIDTH).fill(0));
 
@@ -242,23 +243,23 @@ export class Game {
     }
 
 
-    const wantDir =
+    const requestedDir =
       (this.input.isPressed('ArrowUp') || this.input.isPressed('w')) ? 'up' :
       (this.input.isPressed('ArrowDown') || this.input.isPressed('s')) ? 'down' :
       (this.input.isPressed('ArrowLeft') || this.input.isPressed('a')) ? 'left' :
       (this.input.isPressed('ArrowRight') || this.input.isPressed('d')) ? 'right' :
       null;
 
-    if (wantDir &&
-      wantDir !== this.snake[0][2] &&
-      !((wantDir === 'up' && this.snake[0][2] === 'down') ||
-        (wantDir === 'down' && this.snake[0][2] === 'up') ||
-        (wantDir === 'left' && this.snake[0][2] === 'right') ||
-        (wantDir === 'right' && this.snake[0][2] === 'left'))) {
-      this.pendingDir = wantDir;
+    if (requestedDir &&
+      requestedDir !== this.snake[0][2] &&
+      !((requestedDir === 'up' && this.snake[0][2] === 'down') ||
+        (requestedDir === 'down' && this.snake[0][2] === 'up') ||
+        (requestedDir === 'left' && this.snake[0][2] === 'right') ||
+        (requestedDir === 'right' && this.snake[0][2] === 'left'))) {
+      this.pendingDir = requestedDir;
     }
 
-    if (this.timeElapsed > 30) {
+    if (this.timeElapsed > SPEED) {
       if (this.moveSnake() == 1){
         this.timeElapsed = 0;
       }
