@@ -18,6 +18,7 @@ export class Game {
   private moveProgress: number;
   private volumeOn: boolean;
   private pivots: Map<string, any[]>;
+  private pendingDir: string | null;
 
   constructor(private canvas: HTMLCanvasElement, private ctx: CanvasRenderingContext2D) {
     this.renderer = new Renderer(ctx, canvas.width, canvas.height);
@@ -33,6 +34,7 @@ export class Game {
     this.moveProgress = 0;
     this.volumeOn = true;
     this.pivots = new Map<string, any[]>();
+    this.pendingDir = null;
 
     BOARD[this.foodCoord[1]][this.foodCoord[0]] = 1;
 
@@ -122,6 +124,7 @@ export class Game {
     this.timeElapsed = 0;
     this.moveProgress = 0;
     this.gameStarted = false;
+    this.pendingDir = null;
 
     BOARD[this.foodCoord[1]][this.foodCoord[0]] = 1;
 
@@ -150,7 +153,13 @@ export class Game {
   }
 
   moveSnake() {
-    this.pivots.set(`${this.snake[0][1]},${this.snake[0][0]}`, [this.snake[0][2], 0]);
+    const snakeOnGrid: boolean = this.snake[0][0] % 1 == 0 && this.snake[0][1] % 1 == 0;
+    if (snakeOnGrid && this.pendingDir) {
+      this.snake[0][2] = this.pendingDir;
+      this.playAudio(this.snake[0][2]);
+      this.pendingDir = null;
+      this.pivots.set(`${this.snake[0][1]},${this.snake[0][0]}`, [this.snake[0][2], 0]);
+    }
     const dir = this.snake[0][2];
     const snakeOnEdge: boolean = (
       (dir == 'up' && (this.snake[0][0] <= 0)) ||
@@ -232,30 +241,24 @@ export class Game {
       BOARD[this.foodCoord[1]][this.foodCoord[0]] = 1;
     }
 
-    let dirChanged = false;
 
-    if ((this.input.isPressed('ArrowUp') || this.input.isPressed('w')) && snakeOnGrid && this.snake[0][2] != 'down' && !dirChanged) {
-      this.snake[0][2] = 'up';
-      this.playAudio('up');
-      dirChanged = true;
-    }
-    if ((this.input.isPressed('ArrowDown') || this.input.isPressed('s')) && snakeOnGrid && this.snake[0][2] != 'up' && !dirChanged) {
-      this.snake[0][2] = 'down';
-      this.playAudio('down');
-      dirChanged = true;
-    }
-    if ((this.input.isPressed('ArrowLeft') || this.input.isPressed('a')) && snakeOnGrid && this.snake[0][2] != 'right' && !dirChanged) {
-      this.snake[0][2] = 'left';
-      this.playAudio('left');
-      dirChanged = true;
-    }
-    if ((this.input.isPressed('ArrowRight') || this.input.isPressed('d')) && snakeOnGrid && this.snake[0][2] != 'left' && !dirChanged) {
-      this.snake[0][2] = 'right';
-      this.playAudio('right');
-      dirChanged = true;
+    const wantDir =
+      (this.input.isPressed('ArrowUp') || this.input.isPressed('w')) ? 'up' :
+      (this.input.isPressed('ArrowDown') || this.input.isPressed('s')) ? 'down' :
+      (this.input.isPressed('ArrowLeft') || this.input.isPressed('a')) ? 'left' :
+      (this.input.isPressed('ArrowRight') || this.input.isPressed('d')) ? 'right' :
+      null;
+
+    if (wantDir &&
+      wantDir !== this.snake[0][2] &&
+      !((wantDir === 'up' && this.snake[0][2] === 'down') ||
+        (wantDir === 'down' && this.snake[0][2] === 'up') ||
+        (wantDir === 'left' && this.snake[0][2] === 'right') ||
+        (wantDir === 'right' && this.snake[0][2] === 'left'))) {
+      this.pendingDir = wantDir;
     }
 
-    if (this.timeElapsed > 30) {
+    if (this.timeElapsed > 20) {
       if (this.moveSnake() == 1){
         this.timeElapsed = 0;
       }
