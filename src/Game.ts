@@ -112,6 +112,9 @@ export class Game {
     this.redraw();
     document.addEventListener('keydown', (event) => {
       if (START_MOVE_KEYS.includes(event.key) && this.gameStarted) {
+        if (event.key == 'ArrowRight') {
+          this.playAudio('right');
+        }
         requestAnimationFrame(this.loop);
       }
     });
