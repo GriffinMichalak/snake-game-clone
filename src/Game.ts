@@ -7,7 +7,8 @@ let BOARD: number[][] = Array.from({ length: BOARD_HEIGHT }, () => Array(BOARD_W
 export class Game {
   private renderer: Renderer;
   private input: Input;
-  private snake: number[][];
+  private snake: any[][];
+  private prevSnake: any[][];
   private direction: string;
   private foodCoord: number[];
   private gameOver: boolean;
@@ -17,11 +18,14 @@ export class Game {
   private timeElapsed: number;
   private moveProgress: number;
   private volumeOn: boolean;
+  private pivots: Map<string, any[]>;
 
   constructor(private canvas: HTMLCanvasElement, private ctx: CanvasRenderingContext2D) {
     this.renderer = new Renderer(ctx, canvas.width, canvas.height);
     this.input = new Input();
-    this.snake = [[START_Y, START_X], [START_Y, START_X - 1], [START_Y, START_X - 2]];
+    this.snake = [[START_Y, START_X, 'right'], [START_Y, START_X - 1, 'right'], [START_Y, START_X - 2, 'right']];
+    // this.snake = [[START_Y, START_X]];
+    this.prevSnake = this.snake.map(segment => [...segment]); // snake deep copy
     this.direction = 'right';
     this.foodCoord = this.generateFood([[START_X, START_Y]]);
     this.gameOver = false;
@@ -31,6 +35,7 @@ export class Game {
     this.timeElapsed = 0;
     this.moveProgress = 0;
     this.volumeOn = true;
+    this.pivots = new Map<string, any[]>();
 
     BOARD[this.foodCoord[1]][this.foodCoord[0]] = 1;
 
@@ -65,7 +70,30 @@ export class Game {
   }
 
   growSnake() {
-    this.snake.push([-10,-10]);
+    const snakeEnd = this.snake[this.snake.length - 1];
+    const endDir = snakeEnd[2];
+    let newX: number = snakeEnd[1], newY: number = snakeEnd[0];
+    let newDir: string = endDir;
+    switch (endDir) {
+      case 'up':
+        newX = snakeEnd[1];
+        newY = snakeEnd[0] + 1;
+        break;
+      case 'down':
+        newX = snakeEnd[1];
+        newY = snakeEnd[0] - 1;
+        break;
+      case 'left':
+        newX = snakeEnd[1] + 1;
+        newY = snakeEnd[0];
+        break;
+      case 'right':
+        newX = snakeEnd[1] - 1;
+        newY = snakeEnd[0];
+        break;
+    }
+    this.snake.push([newY, newX, newDir]);
+    this.renderer.drawBoard(BOARD, newX, newY, this.snake);
   }
 
   increaseScore() {
@@ -88,6 +116,7 @@ export class Game {
     this.renderer = new Renderer(this.ctx, this.canvas.width, this.canvas.height);
     this.input = new Input();
     this.snake = [[START_Y, START_X], [START_Y, START_X - 1], [START_Y, START_X - 2]];
+    this.prevSnake = this.snake.map(segment => [...segment]); // snake deep copy
     this.direction = 'right';
     this.foodCoord = this.generateFood([[START_X, START_Y]]);
     this.gameOver = false;
@@ -117,11 +146,13 @@ export class Game {
   }
 
   moveSnake() {
+    this.pivots.set(`${this.snake[0][1]},${this.snake[0][0]}`, [this.snake[0][2], 0]);
+    const dir = this.snake[0][2];
     const snakeOnEdge: boolean = (
-      (this.direction == 'up' && !(this.snake[0][0] > 0)) ||
-      (this.direction == 'down' && !(this.snake[0][0] < BOARD_HEIGHT - 1)) ||
-      (this.direction == 'left' && !(this.snake[0][1] > 0)) || 
-      (this.direction == 'right' && !(this.snake[0][1] < BOARD_WIDTH - 1))
+      (dir == 'up' && !(this.snake[0][0] > 0)) ||
+      (dir == 'down' && !(this.snake[0][0] < BOARD_HEIGHT - 1)) ||
+      (dir == 'left' && !(this.snake[0][1] > 0)) || 
+      (dir == 'right' && !(this.snake[0][1] < BOARD_WIDTH - 1))
     );
 
     if (snakeOnEdge || this.snakeOverlap()) {
@@ -133,30 +164,53 @@ export class Game {
     if (this.moveProgress >= 1.0) {
       this.moveProgress -= 1.0; 
     }
-    const headX = this.snake[0][1];
-    const headY = this.snake[0][0];
-    let dx = 0, dy = 0;
 
-    switch (this.direction) {
-      case 'up':
-        dx = 0, dy = -1;
-        break;
-      case 'down':
-        dx = 0, dy = 1;
-        break;
-      case 'left':
-        dx = -1, dy = 0;
-        break;
-      case 'right':
-        dx = 1, dy = 0;
-        break;
+    for (let i = 0; i < this.snake.length; i++) {
+      const curr = this.snake[i];
+      const pieceX = curr[1];
+      const pieceY = curr[0];
+
+      const key = `${curr[1]},${curr[0]}`;
+      if (this.pivots.has(key)) {
+        const value = this.pivots.get(key);
+        if (Array.isArray(value) && typeof value[0] === "string" && typeof value[1] === "number") {
+          const dir: string = value[0];
+          const visits: number = value[1];
+          curr[2] = dir;
+          this.pivots.set(key, [dir, visits + 1]);
+          if (visits + 1 == this.snake.length) { 
+            this.pivots.delete(key);
+          }
+        }
+      }
+
+      let dx = 0, dy = 0;
+
+      switch (curr[2]) {
+        case 'up':
+          dx = 0, dy = -0.25;
+          break;
+        case 'down':
+          dx = 0, dy = 0.25;
+          break;
+        case 'left':
+          dx = -0.25, dy = 0;
+          break;
+        case 'right':
+          dx = 0.25, dy = 0;
+          break;
+      }
+
+      curr[0] = pieceY + dy;
+      curr[1] = pieceX + dx;
+  
+      // const newPiece = [pieceY + dy, pieceX + dx];
+      // this.snake.unshift(newPiece); // add new head to the front of the array
+      // this.snake.pop(); // remove the tail (unless growing, to be handled later)
+  
+      this.renderer.drawBoard(BOARD, curr[1], curr[0], this.snake);
     }
 
-    const newHead = [headY + dy, headX + dx];
-    this.snake.unshift(newHead); // add new head to the front of the array
-    this.snake.pop(); // remove the tail (unless growing, to be handled later)
-
-    this.renderer.drawBoard(BOARD, newHead[1], newHead[0], this.snake);
     return 1;
   }
 
@@ -180,24 +234,24 @@ export class Game {
       BOARD[this.foodCoord[1]][this.foodCoord[0]] = 1;
     }
 
-    if ((this.input.isPressed('ArrowUp') || this.input.isPressed('w')) && snakeOnGrid && this.direction != 'down') {
-      this.direction = 'up';
+    if ((this.input.isPressed('ArrowUp') || this.input.isPressed('w')) && snakeOnGrid && this.snake[0][2] != 'down') {
+      this.snake[0][2] = 'up';
       this.playAudio('up');
     }
-    if ((this.input.isPressed('ArrowDown') || this.input.isPressed('s')) && snakeOnGrid && this.direction != 'up') {
-      this.direction = 'down';
+    if ((this.input.isPressed('ArrowDown') || this.input.isPressed('s')) && snakeOnGrid && this.snake[0][2] != 'up') {
+      this.snake[0][2] = 'down';
       this.playAudio('down');
     }
-    if ((this.input.isPressed('ArrowLeft') || this.input.isPressed('a')) && snakeOnGrid && this.direction != 'right') {
-      this.direction = 'left';
+    if ((this.input.isPressed('ArrowLeft') || this.input.isPressed('a')) && snakeOnGrid && this.snake[0][2] != 'right') {
+      this.snake[0][2] = 'left';
       this.playAudio('left');
     }
-    if ((this.input.isPressed('ArrowRight') || this.input.isPressed('d')) && snakeOnGrid && this.direction != 'left') {
-      this.direction = 'right';
+    if ((this.input.isPressed('ArrowRight') || this.input.isPressed('d')) && snakeOnGrid && this.snake[0][2] != 'left') {
+      this.snake[0][2] = 'right';
       this.playAudio('right');
     }
 
-    if (this.timeElapsed > 100) {
+    if (this.timeElapsed > 30) {
       if (this.moveSnake() == 1){
         this.timeElapsed = 0;
       }
