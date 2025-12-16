@@ -9,6 +9,21 @@ window.addEventListener("load", () => {
   }
 
   const game = new Game(canvas, ctx);
+
+  const playBtn = document.getElementById('play-btn');
+  const modal = document.getElementById('modal');
+  if (modal instanceof HTMLDialogElement) {
+    modal.showModal();
+    modal.style.display = 'flex';
+  }
+
+  playBtn!.addEventListener('click', () => {
+      if (modal instanceof HTMLDialogElement) {
+          modal.close();
+          modal.style.display = 'none';
+      }
+  });
+
   game.start();
 });
 

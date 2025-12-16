@@ -92,7 +92,10 @@ export class Game {
 
   increaseScore() {
     this.score += 1;
-    const menu = document.getElementById('score')!;
+    let menu = document.getElementById('score')!;
+    menu.textContent = `${this.score}`
+
+    menu = document.getElementById('score-start')!;
     menu.textContent = `${this.score}`
   }
 
@@ -109,7 +112,7 @@ export class Game {
     BOARD[this.foodCoord[1]][this.foodCoord[0]] = 0;
     this.renderer = new Renderer(this.ctx, this.canvas.width, this.canvas.height);
     this.input = new Input();
-    this.snake = [[START_Y, START_X], [START_Y, START_X - 1], [START_Y, START_X - 2]];
+    this.snake = [[START_Y, START_X, 'right'], [START_Y, START_X - 1, 'right'], [START_Y, START_X - 2, 'right']];
     this.foodCoord = this.generateFood([[START_X, START_Y]]);
     this.gameOver = false;
     this.score = 0;
@@ -118,6 +121,12 @@ export class Game {
     this.moveProgress = 0;
 
     BOARD[this.foodCoord[1]][this.foodCoord[0]] = 1;
+
+    let menu = document.getElementById('score')!;
+    menu.textContent = `${this.score}`
+
+    menu = document.getElementById('score-start')!;
+    menu.textContent = `${this.score}`
   }
 
   snakeOverlap(): boolean {
@@ -251,17 +260,28 @@ export class Game {
         // game end logic 
         this.gameOver = true;
         this.highScore = Math.max(this.score, this.highScore);
-        const menu = document.getElementById('highscore')!;
+        let menu = document.getElementById('highscore')!;
         menu.textContent = `${this.highScore}`;
+
+        menu = document.getElementById('highscore-start')!;
+        menu.textContent = `${this.highScore}`;
+
+        const modal = document.getElementById('modal');
         setTimeout(() => {
-          this.renderer.drawGameOver();
-        }, 1200);
-        window.addEventListener('keydown', (e) => {
-          if (e.key === 'r') {
-            this.reset();
-            this.start();
+          if (modal instanceof HTMLDialogElement) {
+            modal.showModal();
+            modal.style.display = 'flex';
           }
-        }, { once: true });
+        }, 1200);
+        const playBtn = document.getElementById('play-btn');
+        playBtn!.addEventListener('click', () => {
+          if (modal instanceof HTMLDialogElement) {
+              modal.close();
+              modal.style.display = 'none';
+              this.reset();
+              this.start();
+          }
+      });
         return;
       }
     }
