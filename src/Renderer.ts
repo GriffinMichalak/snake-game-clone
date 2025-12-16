@@ -1,5 +1,5 @@
 import { Colors } from "./Constants.js";
-import { BOARD_HEIGHT, BOARD_WIDTH } from "./Settings.js";
+import { BOARD_HEIGHT, BOARD_WIDTH, SNAKE_COLOR } from "./Settings.js";
 
 const MARGIN = 23;
 export class Renderer {
@@ -56,7 +56,7 @@ export class Renderer {
   }
 
   drawSnake(cell_width: number, cell_height: number, snake: any[][]) {
-    this.ctx.fillStyle = Colors.SNAKE_COLOR;
+    this.ctx.fillStyle = SNAKE_COLOR;
 
     snake.forEach((cell) => {
       this.ctx.fillRect(MARGIN + cell[1] * cell_width, MARGIN + cell[0] * cell_height, cell_width, cell_height);

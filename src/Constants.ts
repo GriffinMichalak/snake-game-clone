@@ -4,7 +4,6 @@ export enum Colors {
   OUTLINE_GREEN = "#578a34",
   MENU_GREEN = "#4a752c",
   FOOD_COLOR = "#e7471d",
-  SNAKE_COLOR = "#4674ea"
 }
 
 export const MOVE_KEYS: string[] = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'w', 'a', 's', 'd'];
