@@ -25,6 +25,20 @@ window.addEventListener("load", () => {
     }
   });
 
+
+  const speedSelect = document.getElementById('speed-select') as HTMLSelectElement | null;
+  if (speedSelect) {
+    speedSelect.addEventListener('change', () => game.redraw());
+  }
+
+  const colorSelect = document.getElementById('color-select') as HTMLSelectElement | null;
+  if (colorSelect) {
+    colorSelect.addEventListener('change', () => game.redraw());
+  }
+
+  // const gridSelect = document.getElementById('grid-select') as HTMLSelectElement | null;
+  // gridSelect?.addEventListener('change', game.redraw());
+
   game.start();
 });
 

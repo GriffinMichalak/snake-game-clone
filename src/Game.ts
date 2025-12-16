@@ -104,8 +104,12 @@ export class Game {
     menu.textContent = `${this.score}`
   }
 
-  start() {
+  redraw() {
     this.renderer.drawBoard(BOARD, this.snake);
+  }
+
+  start() {
+    this.redraw();
     document.addEventListener('keydown', (event) => {
       if (START_MOVE_KEYS.includes(event.key) && this.gameStarted) {
         requestAnimationFrame(this.loop);
