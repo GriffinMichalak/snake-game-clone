@@ -258,7 +258,7 @@ export class Game {
       this.pendingDir = wantDir;
     }
 
-    if (this.timeElapsed > 20) {
+    if (this.timeElapsed > 30) {
       if (this.moveSnake() == 1){
         this.timeElapsed = 0;
       }
