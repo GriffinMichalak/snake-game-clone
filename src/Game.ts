@@ -1,6 +1,6 @@
 import { Renderer } from "./Renderer.js";
 import { Input } from "./Input.js";
-import { BOARD_HEIGHT, BOARD_WIDTH, START_X, START_Y, MOVE_KEYS } from "./Constants.js";
+import { BOARD_HEIGHT, BOARD_WIDTH, START_X, START_Y, START_MOVE_KEYS } from "./Constants.js";
 
 let BOARD: number[][] = Array.from({ length: BOARD_HEIGHT }, () => Array(BOARD_WIDTH).fill(0));
 
@@ -99,7 +99,7 @@ export class Game {
   start() {
     this.renderer.drawBoard(BOARD, this.snake);
     document.addEventListener('keydown', (event) => {
-      if (MOVE_KEYS.includes(event.key)) {
+      if (START_MOVE_KEYS.includes(event.key)) {
         requestAnimationFrame(this.loop);
       }
     });
@@ -141,10 +141,10 @@ export class Game {
     this.pivots.set(`${this.snake[0][1]},${this.snake[0][0]}`, [this.snake[0][2], 0]);
     const dir = this.snake[0][2];
     const snakeOnEdge: boolean = (
-      (dir == 'up' && !(this.snake[0][0] > 0)) ||
-      (dir == 'down' && !(this.snake[0][0] < BOARD_HEIGHT - 1)) ||
-      (dir == 'left' && !(this.snake[0][1] > 0)) || 
-      (dir == 'right' && !(this.snake[0][1] < BOARD_WIDTH - 1))
+      (dir == 'up' && (this.snake[0][0] <= 0)) ||
+      (dir == 'down' && (this.snake[0][0] >= BOARD_HEIGHT - 1)) ||
+      (dir == 'left' && (this.snake[0][1] <= 0)) || 
+      (dir == 'right' && (this.snake[0][1] >= BOARD_WIDTH - 1))
     );
 
     if (snakeOnEdge || this.snakeOverlap()) {
