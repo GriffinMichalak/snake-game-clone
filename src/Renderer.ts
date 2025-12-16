@@ -39,16 +39,17 @@ export class Renderer {
           this.ctx.fillStyle = Colors.FOOD_COLOR;
           this.ctx.fillRect(x, y, cell_width, cell_height);
         }
-        this.drawSnake(snake_x, snake_y, cell_width, cell_height, MARGIN, snake);
       }
     }
+
+    this.drawSnake(snake_x, snake_y, cell_width, cell_height, MARGIN, snake);
   }
 
   drawSnake(x: number, y: number, cell_width: number, cell_height: number, margin: number, snake: number[][]) {
     this.ctx.fillStyle = Colors.SNAKE_COLOR;
 
     snake.forEach((cell) => {
-      this.ctx.fillRect(MARGIN + cell[1] * cell_height, MARGIN + cell[0] * cell_width, cell_width, cell_height);
+      this.ctx.fillRect(MARGIN + cell[1] * cell_width, MARGIN + cell[0] * cell_height, cell_width, cell_height);
     })
   }
 

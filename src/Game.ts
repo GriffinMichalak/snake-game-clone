@@ -93,7 +93,6 @@ export class Game {
         break;
     }
     this.snake.push([newY, newX, newDir]);
-    this.renderer.drawBoard(BOARD, newX, newY, this.snake);
   }
 
   increaseScore() {
@@ -207,8 +206,6 @@ export class Game {
       // const newPiece = [pieceY + dy, pieceX + dx];
       // this.snake.unshift(newPiece); // add new head to the front of the array
       // this.snake.pop(); // remove the tail (unless growing, to be handled later)
-  
-      this.renderer.drawBoard(BOARD, curr[1], curr[0], this.snake);
     }
 
     return 1;
