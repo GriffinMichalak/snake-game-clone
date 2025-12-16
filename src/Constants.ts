@@ -15,3 +15,8 @@ export const START_Y = 7; // zero-indexed
 
 export const MOVE_KEYS: string[] = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'w', 'a', 's', 'd'];
 export const START_MOVE_KEYS: string[] = ['ArrowUp', 'ArrowDown', 'ArrowRight', 'w', 's', 'd'];
+
+// speeds
+export const SLOW_SPEED = 20;
+export const NORMAL_SPEED = 30;
+export const FAST_SPEED = 15;

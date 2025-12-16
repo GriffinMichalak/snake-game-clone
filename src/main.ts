@@ -18,10 +18,11 @@ window.addEventListener("load", () => {
   }
 
   playBtn!.addEventListener('click', () => {
-      if (modal instanceof HTMLDialogElement) {
-          modal.close();
-          modal.style.display = 'none';
-      }
+    if (modal instanceof HTMLDialogElement) {
+        modal.close();
+        modal.style.display = 'none';
+        game.gameStarted = true;
+    }
   });
 
   game.start();

@@ -10,6 +10,7 @@ export class Game {
   private snake: any[][];
   private foodCoord: number[];
   private gameOver: boolean;
+  public gameStarted: boolean;
   private score: number;
   private highScore: number;
   private lastTime: number;
@@ -24,6 +25,7 @@ export class Game {
     this.snake = [[START_Y, START_X, 'right'], [START_Y, START_X - 1, 'right'], [START_Y, START_X - 2, 'right']];
     this.foodCoord = this.generateFood([[START_X, START_Y]]);
     this.gameOver = false;
+    this.gameStarted = false;
     this.score = 0;
     this.highScore = 0;
     this.lastTime = 0;
@@ -102,7 +104,7 @@ export class Game {
   start() {
     this.renderer.drawBoard(BOARD, this.snake);
     document.addEventListener('keydown', (event) => {
-      if (START_MOVE_KEYS.includes(event.key)) {
+      if (START_MOVE_KEYS.includes(event.key) && this.gameStarted) {
         requestAnimationFrame(this.loop);
       }
     });
@@ -119,6 +121,7 @@ export class Game {
     this.lastTime = 0;
     this.timeElapsed = 0;
     this.moveProgress = 0;
+    this.gameStarted = false;
 
     BOARD[this.foodCoord[1]][this.foodCoord[0]] = 1;
 
@@ -279,6 +282,7 @@ export class Game {
               modal.close();
               modal.style.display = 'none';
               this.reset();
+              this.gameStarted = true;
               this.start();
           }
       });
